@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EkoPodcast - Ekonomi ve Finans Podcast Platformu</title>
+    <meta name="description" content="Türkiye ve Dünya'daki ekonomik gelişmeleri, derinlemesine araştırma yazılarını ve uzman söyleşilerini barındıran profesyonel podcast platformu.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg class="logo-icon" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Combined financial chart and sound wave icon -->
+                        <g class="chart-bars">
+                            <rect x="8" y="30" width="6" height="12" class="bar bar-1"/>
+                            <rect x="16" y="22" width="6" height="20" class="bar bar-2"/>
+                            <rect x="24" y="15" width="6" height="27" class="bar bar-3"/>
+                        </g>
+                        <g class="sound-waves">
+                            <path d="M 35 25 Q 38 20, 41 25 Q 44 30, 47 25" class="wave wave-1"/>
+                            <path d="M 35 25 Q 37 22, 39 25 Q 41 28, 43 25" class="wave wave-2"/>
+                        </g>
+                        <circle cx="33" cy="25" r="3" class="mic-dot"/>
+                    </svg>
+                    <span class="logo-text">Eko<span class="logo-highlight">Podcast</span></span>
+                </div>
+                
+                <nav class="nav">
+                    <a href="#" class="nav-link active">Ana Sayfa</a>
+                    <a href="#" class="nav-link" onclick="showAllPodcasts(); return false;">Tüm Podcastler</a>
+                    <a href="#" class="nav-link" onclick="showCategories(); return false;">Kategoriler</a>
+                    <a href="#" class="nav-link" onclick="showAdminPanel(); return false;">Yönetim Paneli</a>
+                </nav>
+
+                <div class="auth-buttons">
+                    <button class="btn btn-secondary" onclick="showLoginModal()">Giriş Yap</button>
+                    <button class="btn btn-primary" onclick="showRegisterModal()">Üye Ol</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Ekonominin Nabzını Dinleyin</h1>
+                <p class="hero-subtitle">Türkiye ve Dünya ekonomisindeki gelişmeleri, uzman analizlerini ve derinlemesine araştırmaları keşfedin</p>
+                <button class="btn btn-hero" onclick="scrollToContent()">Podcastleri Keşfet</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ad Banner -->
+    <div class="ad-banner-top">
+        <div class="container">
+            <div class="ad-slot">
+                <span class="ad-label">REKLAM</span>
+                <p class="ad-placeholder">Reklam Alanı - 970x90</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="content-wrapper">
+                <!-- Main Content Area -->
+                <div class="content-main">
+                    <!-- Most Listened Section -->
+                    <section class="section featured-section" id="most-listened">
+                        <div class="section-header">
+                            <h2 class="section-title">
+                                <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                En Çok Dinlenenler
+                            </h2>
+                            <p class="section-subtitle">Bu haftanın en popüler ekonomi podcastleri</p>
+                        </div>
+                        <div class="podcast-grid featured-grid" id="featured-podcasts">
+                            <!-- Featured podcasts will be loaded here -->
+                        </div>
+                    </section>
+
+                    <!-- Latest Podcasts -->
+                    <section class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">En Yeni Bölümler</h2>
+                        </div>
+                        <div class="podcast-grid" id="latest-podcasts">
+                            <!-- Latest podcasts will be loaded here -->
+                        </div>
+                    </section>
+
+                    <!-- Highlighted Podcasts -->
+                    <section class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Öne Çıkanlar</h2>
+                        </div>
+                        <div class="podcast-grid" id="highlighted-podcasts">
+                            <!-- Highlighted podcasts will be loaded here -->
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <!-- Ad Slot -->
+                    <div class="sidebar-ad">
+                        <span class="ad-label">REKLAM</span>
+                        <div class="ad-slot-vertical">
+                            <p class="ad-placeholder">Reklam Alanı<br>300x600</p>
+                        </div>
+                    </div>
+
+                    <!-- Categories Widget -->
+                    <div class="widget">
+                        <h3 class="widget-title">Kategoriler</h3>
+                        <ul class="category-list">
+                            <li><a href="#" onclick="filterByCategory('makroekonomi'); return false;">Makroekonomi</a></li>
+                            <li><a href="#" onclick="filterByCategory('piyasa'); return false;">Piyasa Analizi</a></li>
+                            <li><a href="#" onclick="filterByCategory('roportaj'); return false;">Röportaj</a></li>
+                            <li><a href="#" onclick="filterByCategory('kripto'); return false;">Kripto Para</a></li>
+                            <li><a href="#" onclick="filterByCategory('finans'); return false;">Kişisel Finans</a></li>
+                            <li><a href="#" onclick="filterByCategory('yatirim'); return false;">Yatırım Stratejileri</a></li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">
+                        <svg class="logo-icon" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                            <g class="chart-bars">
+                                <rect x="8" y="30" width="6" height="12" class="bar bar-1"/>
+                                <rect x="16" y="22" width="6" height="20" class="bar bar-2"/>
+                                <rect x="24" y="15" width="6" height="27" class="bar bar-3"/>
+                            </g>
+                            <g class="sound-waves">
+                                <path d="M 35 25 Q 38 20, 41 25 Q 44 30, 47 25" class="wave wave-1"/>
+                                <path d="M 35 25 Q 37 22, 39 25 Q 41 28, 43 25" class="wave wave-2"/>
+                            </g>
+                            <circle cx="33" cy="25" r="3" class="mic-dot"/>
+                        </svg>
+                        <span class="logo-text">Eko<span class="logo-highlight">Podcast</span></span>
+                    </div>
+                    <p class="footer-description">Ekonominin nabzını dinleyin. Türkiye ve Dünya ekonomisindeki gelişmeleri takip edin.</p>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Hızlı Erişim</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Hakkımızda</a></li>
+                        <li><a href="#">İletişim</a></li>
+                        <li><a href="#">Gizlilik Politikası</a></li>
+                        <li><a href="#">Kullanım Koşulları</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">Kategoriler</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Makroekonomi</a></li>
+                        <li><a href="#">Piyasa Analizi</a></li>
+                        <li><a href="#">Röportaj</a></li>
+                        <li><a href="#">Kripto Para</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 EkoPodcast. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-overlay" onclick="closeModal('loginModal')"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
+            <h2 class="modal-title">Giriş Yap</h2>
+            <form class="auth-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">E-posta Adresi</label>
+                    <input type="email" id="loginEmail" required placeholder="ornek@email.com">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Giriş Yap</button>
+            </form>
+            <p class="modal-footer-text">Hesabınız yok mu? <a href="#" onclick="closeModal('loginModal'); showRegisterModal(); return false;">Üye Ol</a></p>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-overlay" onclick="closeModal('registerModal')"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('registerModal')">&times;</button>
+            <h2 class="modal-title">Üye Ol</h2>
+            <form class="auth-form" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="registerEmail">E-posta Adresi</label>
+                    <input type="email" id="registerEmail" required placeholder="ornek@email.com">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Üye Ol</button>
+            </form>
+            <p class="modal-footer-text">Zaten üye misiniz? <a href="#" onclick="closeModal('registerModal'); showLoginModal(); return false;">Giriş Yap</a></p>
+        </div>
+    </div>
+
+    <!-- Podcast Player Modal -->
+    <div class="modal" id="playerModal">
+        <div class="modal-overlay" onclick="closePlayerModal()"></div>
+        <div class="modal-content modal-large">
+            <button class="modal-close" onclick="closePlayerModal()">&times;</button>
+            <div id="playerContent">
+                <!-- Player content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div class="modal" id="adminModal">
+        <div class="modal-overlay" onclick="closeModal('adminModal')"></div>
+        <div class="modal-content modal-large">
+            <button class="modal-close" onclick="closeModal('adminModal')">&times;</button>
+            <h2 class="modal-title">Yönetim Paneli</h2>
+            <div class="admin-panel">
+                <form class="admin-form" onsubmit="handleUploadPodcast(event)">
+                    <div class="form-group">
+                        <label for="podcastTitle">Podcast Başlığı</label>
+                        <input type="text" id="podcastTitle" required placeholder="Bölüm başlığını girin">
+                    </div>
+                    <div class="form-group">
+                        <label for="podcastDescription">Açıklama</label>
+                        <textarea id="podcastDescription" required placeholder="Bölüm açıklaması" rows="4"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="podcastCategory">Kategori</label>
+                            <select id="podcastCategory" required>
+                                <option value="">Kategori Seçin</option>
+                                <option value="makroekonomi">Makroekonomi</option>
+                                <option value="piyasa">Piyasa Analizi</option>
+                                <option value="roportaj">Röportaj</option>
+                                <option value="kripto">Kripto Para</option>
+                                <option value="finans">Kişisel Finans</option>
+                                <option value="yatirim">Yatırım Stratejileri</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="podcastDuration">Süre (dakika)</label>
+                            <input type="number" id="podcastDuration" required placeholder="45" min="1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="podcastAudio">Ses Dosyası URL</label>
+                        <input type="url" id="podcastAudio" required placeholder="https://example.com/podcast.mp3">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Podcast Yükle</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
