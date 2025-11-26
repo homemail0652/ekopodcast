@@ -2,11 +2,7 @@
 // DATA MANAGEMENT
 // ===================================
 
-// Google Sheets CSV Linki (Burası sizin tablonuzun linki olacak)
-// Örnek: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR......../pub?output=csv"
-const GOOGLE_SHEET_CSV_URL = "";
-
-// Default/Fallback Data (Eğer tablo bağlanmazsa bu görünür)
+// Sample podcast data
 let podcasts = [
     {
         id: 1,
@@ -40,6 +36,72 @@ let podcasts = [
         listens: 1420,
         featured: true,
         audioUrl: "#"
+    },
+    {
+        id: 4,
+        title: "Kişisel Finans: Tasarruf ve Yatırım Stratejileri",
+        description: "Bireysel yatırımcılar için tasarruf yöntemleri ve yatırım araçlarını detaylı olarak ele alıyoruz.",
+        category: "finans",
+        duration: 41,
+        date: "2025-11-12",
+        listens: 875,
+        featured: false,
+        audioUrl: "#"
+    },
+    {
+        id: 5,
+        title: "Dünya Ekonomisinde Resesyon Riskleri",
+        description: "Küresel ekonomideki durgunluk sinyallerini ve olası senaryoları ekonomistlerle tartışıyoruz.",
+        category: "makroekonomi",
+        duration: 48,
+        date: "2025-11-10",
+        listens: 1105,
+        featured: false,
+        audioUrl: "#"
+    },
+    {
+        id: 6,
+        title: "Borsa İstanbul: Hisse Senedi Analizi",
+        description: "BIST 100'deki öne çıkan hisse senetlerini ve yatırım fırsatlarını analiz ediyoruz.",
+        category: "piyasa",
+        duration: 35,
+        date: "2025-11-08",
+        listens: 720,
+        featured: false,
+        audioUrl: "#"
+    },
+    {
+        id: 7,
+        title: "Röportaj: Ünlü Ekonomist Prof. Dr. Ahmet Yılmaz",
+        description: "Türkiye'nin önde gelen ekonomistlerinden Prof. Dr. Ahmet Yılmaz ile ekonomi gündemini konuştuk.",
+        category: "roportaj",
+        duration: 62,
+        date: "2025-11-05",
+        listens: 1580,
+        featured: true,
+        audioUrl: "#"
+    },
+    {
+        id: 8,
+        title: "Altın ve Döviz Piyasalarında Güncel Durum",
+        description: "Altın fiyatları, dolar/TL kuru ve döviz piyasalarındaki son gelişmeleri değerlendiriyoruz.",
+        category: "piyasa",
+        duration: 33,
+        date: "2025-11-03",
+        listens: 950,
+        featured: false,
+        audioUrl: "#"
+    },
+    {
+        id: 9,
+        title: "Yatırım Fonları ve Portföy Yönetimi",
+        description: "Yatırım fonları, ETF'ler ve portföy çeşitlendirme stratejilerini uzmanlarla ele alıyoruz.",
+        category: "yatirim",
+        duration: 44,
+        date: "2025-11-01",
+        listens: 685,
+        featured: false,
+        audioUrl: "#"
     }
 ];
 
@@ -62,87 +124,10 @@ const categoryNames = {
 // INITIALIZATION
 // ===================================
 
-document.addEventListener('DOMContentLoaded', async function () {
-    await loadPodcastsFromSheet(); // Google Sheets'ten verileri çek
+document.addEventListener('DOMContentLoaded', function() {
+    loadPodcasts();
     checkUserSession();
 });
-
-// Veri Çekme Fonksiyonu (Önce JSON, sonra Google Sheets, en son varsayılan)
-async function loadPodcastsFromSheet() {
-    // 1. Yöntem: data.json dosyasını dene (CMS'ten gelen veriler)
-    try {
-        const response = await fetch('data.json');
-        if (response.ok) {
-            const jsonData = await response.json();
-            if (jsonData && jsonData.podcasts && jsonData.podcasts.length > 0) {
-                podcasts = jsonData.podcasts;
-                console.log("data.json'dan veriler başarıyla çekildi:", podcasts);
-                loadPodcasts();
-                return;
-            }
-        }
-    } catch (error) {
-        console.log("data.json okunamadı, Google Sheets deneniyor...");
-    }
-
-    // 2. Yöntem: Google Sheets CSV
-    if (GOOGLE_SHEET_CSV_URL) {
-        try {
-            const response = await fetch(GOOGLE_SHEET_CSV_URL);
-            const data = await response.text();
-            const parsedPodcasts = parseCSV(data);
-
-            if (parsedPodcasts && parsedPodcasts.length > 0) {
-                podcasts = parsedPodcasts;
-                console.log("Google Sheets'ten veriler başarıyla çekildi:", podcasts);
-                loadPodcasts();
-                return;
-            }
-        } catch (error) {
-            console.error("Google Sheets verisi çekilemedi:", error);
-        }
-    }
-
-    // 3. Yöntem: Varsayılan veriler (Hiçbir şey çalışmazsa)
-    console.log("Harici veri kaynağı bulunamadı, varsayılan veriler kullanılıyor.");
-    loadPodcasts();
-}
-
-// CSV Formatını JSON'a Çevirme (Basit Parser)
-function parseCSV(csvText) {
-    const lines = csvText.split('\n');
-    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-    const result = [];
-
-    for (let i = 1; i < lines.length; i++) {
-        if (!lines[i].trim()) continue;
-
-        // Virgül ile ayır ama tırnak içindeki virgülleri yoksay (Regex)
-        const currentLine = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-
-        if (!currentLine) continue;
-
-        const obj = {};
-        let hasData = false;
-
-        headers.forEach((header, index) => {
-            let value = currentLine[index] ? currentLine[index].trim().replace(/^"|"$/g, '') : '';
-
-            // Veri tiplerini düzelt
-            if (header === 'id' || header === 'duration' || header === 'listens') {
-                value = parseInt(value) || 0;
-            } else if (header === 'featured') {
-                value = value.toLowerCase() === 'true';
-            }
-
-            obj[header] = value;
-            if (value) hasData = true;
-        });
-
-        if (hasData) result.push(obj);
-    }
-    return result;
-}
 
 function checkUserSession() {
     const savedUser = localStorage.getItem('currentUser');
@@ -177,13 +162,13 @@ function loadPodcasts() {
         .sort((a, b) => b.listens - a.listens)
         .slice(0, 6);
     renderPodcasts(featuredPodcasts, 'featured-podcasts', true);
-
+    
     // Load latest podcasts
     const latestPodcasts = [...podcasts]
         .sort((a, b) => new Date(b.date) - new Date(a.date))
         .slice(0, 6);
     renderPodcasts(latestPodcasts, 'latest-podcasts');
-
+    
     // Load highlighted podcasts
     const highlightedPodcasts = podcasts.filter(p => p.featured);
     renderPodcasts(highlightedPodcasts, 'highlighted-podcasts');
@@ -192,7 +177,7 @@ function loadPodcasts() {
 function renderPodcasts(podcastList, containerId, isFeatured = false) {
     const container = document.getElementById(containerId);
     if (!container) return;
-
+    
     container.innerHTML = podcastList.map(podcast => createPodcastCard(podcast, isFeatured)).join('');
 }
 
@@ -200,7 +185,7 @@ function createPodcastCard(podcast, isFeatured = false) {
     const categoryName = categoryNames[podcast.category] || podcast.category;
     const featuredClass = isFeatured ? 'featured' : '';
     const badge = isFeatured && podcast.listens > 1000 ? '<div class="podcast-badge">Popüler</div>' : '';
-
+    
     return `
         <div class="podcast-card ${featuredClass}" onclick="openPodcast(${podcast.id})">
             ${badge}
@@ -248,30 +233,30 @@ function createPodcastCard(podcast, isFeatured = false) {
 function openPodcast(podcastId) {
     const podcast = podcasts.find(p => p.id === podcastId);
     if (!podcast) return;
-
+    
     // Check if user has already listened to this podcast
     const hasListened = listenedPodcasts.includes(podcastId);
-
+    
     // If not a member and already listened, show warning
     if (!currentUser && hasListened) {
         showLoginModal();
         alert('Bu podcast\'i daha önce dinlediniz. Tekrar dinlemek için üye olmanız gerekmektedir.');
         return;
     }
-
+    
     // Mark as listened if not a member
     if (!currentUser && !hasListened) {
         listenedPodcasts.push(podcastId);
         localStorage.setItem('listenedPodcasts', JSON.stringify(listenedPodcasts));
     }
-
+    
     const playerContent = document.getElementById('playerContent');
     const categoryName = categoryNames[podcast.category] || podcast.category;
     const podcastComments = comments[podcastId] || [];
-
-    const warningHtml = !currentUser && hasListened ?
+    
+    const warningHtml = !currentUser && hasListened ? 
         '<div class="player-warning">⚠️ Bu podcast\'i ücretsiz dinleme hakkınızı kullandınız. Tekrar dinlemek için üye olun.</div>' : '';
-
+    
     const commentFormHtml = currentUser ? `
         <form class="comment-form" onsubmit="handleAddComment(event, ${podcastId})">
             <div class="form-group">
@@ -281,17 +266,17 @@ function openPodcast(podcastId) {
             <button type="submit" class="btn btn-primary">Yorum Gönder</button>
         </form>
     ` : '<p style="color: var(--color-text-muted); text-align: center; padding: 1rem;">Yorum yapmak için <a href="#" onclick="closePlayerModal(); showLoginModal(); return false;" style="color: var(--color-accent-gold);">giriş yapın</a></p>';
-
-    const commentsHtml = podcastComments.length > 0 ?
+    
+    const commentsHtml = podcastComments.length > 0 ? 
         podcastComments.map(comment => `
             <div class="comment">
                 <div class="comment-author">${comment.author}</div>
                 <div class="comment-text">${comment.text}</div>
                 <div class="comment-date">${new Date(comment.date).toLocaleDateString('tr-TR')}</div>
             </div>
-        `).join('') :
+        `).join('') : 
         '<p style="color: var(--color-text-muted); text-align: center;">Henüz yorum yapılmamış.</p>';
-
+    
     playerContent.innerHTML = `
         <div class="player-container">
             ${warningHtml}
@@ -329,7 +314,7 @@ function openPodcast(podcastId) {
             </div>
         </div>
     `;
-
+    
     showModal('playerModal');
 }
 
@@ -343,26 +328,26 @@ function closePlayerModal() {
 
 function handleAddComment(event, podcastId) {
     event.preventDefault();
-
+    
     if (!currentUser) {
         alert('Yorum yapmak için giriş yapmalısınız.');
         return;
     }
-
+    
     const commentText = document.getElementById('commentText').value;
-
+    
     if (!comments[podcastId]) {
         comments[podcastId] = [];
     }
-
+    
     comments[podcastId].push({
         author: currentUser.email,
         text: commentText,
         date: new Date().toISOString()
     });
-
+    
     localStorage.setItem('comments', JSON.stringify(comments));
-
+    
     // Reload the podcast player to show new comment
     openPodcast(podcastId);
 }
@@ -374,10 +359,10 @@ function handleAddComment(event, podcastId) {
 function handleLogin(event) {
     event.preventDefault();
     const email = document.getElementById('loginEmail').value;
-
+    
     currentUser = { email };
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
+    
     closeModal('loginModal');
     updateAuthUI();
     alert('Başarıyla giriş yaptınız!');
@@ -386,10 +371,10 @@ function handleLogin(event) {
 function handleRegister(event) {
     event.preventDefault();
     const email = document.getElementById('registerEmail').value;
-
+    
     currentUser = { email };
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
+    
     closeModal('registerModal');
     updateAuthUI();
     alert('Başarıyla üye oldunuz!');
@@ -412,7 +397,7 @@ function showAdminPanel() {
 
 function handleUploadPodcast(event) {
     event.preventDefault();
-
+    
     const newPodcast = {
         id: podcasts.length + 1,
         title: document.getElementById('podcastTitle').value,
@@ -424,12 +409,12 @@ function handleUploadPodcast(event) {
         featured: false,
         audioUrl: document.getElementById('podcastAudio').value
     };
-
+    
     podcasts.unshift(newPodcast);
-
+    
     closeModal('adminModal');
     loadPodcasts();
-
+    
     alert('Podcast başarıyla yüklendi!');
     event.target.reset();
 }
@@ -441,7 +426,7 @@ function handleUploadPodcast(event) {
 function filterByCategory(category) {
     const filteredPodcasts = podcasts.filter(p => p.category === category);
     const mainContent = document.querySelector('.content-main');
-
+    
     mainContent.innerHTML = `
         <section class="section">
             <div class="section-header">
@@ -451,14 +436,14 @@ function filterByCategory(category) {
             <div class="podcast-grid" id="filtered-podcasts"></div>
         </section>
     `;
-
+    
     renderPodcasts(filteredPodcasts, 'filtered-podcasts');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function showAllPodcasts() {
     const mainContent = document.querySelector('.content-main');
-
+    
     mainContent.innerHTML = `
         <section class="section">
             <div class="section-header">
@@ -468,14 +453,14 @@ function showAllPodcasts() {
             <div class="podcast-grid" id="all-podcasts"></div>
         </section>
     `;
-
+    
     renderPodcasts(podcasts, 'all-podcasts');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function showCategories() {
     const mainContent = document.querySelector('.content-main');
-
+    
     const categoriesHtml = Object.keys(categoryNames).map(category => {
         const count = podcasts.filter(p => p.category === category).length;
         return `
@@ -495,7 +480,7 @@ function showCategories() {
             </div>
         `;
     }).join('');
-
+    
     mainContent.innerHTML = `
         <section class="section">
             <div class="section-header">
@@ -507,7 +492,7 @@ function showCategories() {
             </div>
         </section>
     `;
-
+    
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
