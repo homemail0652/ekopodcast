@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EkoPodcast - Basit Yönetim Paneli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(20, 20, 20, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .header h1 {
+            color: #d4af37;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #a0a0a0;
+        }
+
+        .info-box {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h3 {
+            color: #d4af37;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #a0a0a0;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .info-box code {
+            background: #1a1a1a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #00d9ff;
+        }
+
+        .form-section {
+            background: rgba(20, 20, 20, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            color: #d4af37;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #a0a0a0;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: #e8e8e8;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #707070;
+            font-size: 12px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            color: #0a0a0a;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .podcast-list {
+            background: rgba(20, 20, 20, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .podcast-list h2 {
+            color: #d4af37;
+            margin-bottom: 20px;
+        }
+
+        .podcast-item {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .podcast-item h3 {
+            color: #e8e8e8;
+            margin-bottom: 10px;
+        }
+
+        .podcast-item p {
+            color: #a0a0a0;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .meta span {
+            background: rgba(212, 175, 55, 0.1);
+            color: #d4af37;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎙️ EkoPodcast Yönetim Paneli</h1>
+            <p>Podcast'lerinizi kolayca yönetin - GitHub ile entegre</p>
+        </div>
+
+        <div class="info-box">
+            <h3>📤 Ses Dosyası Nasıl Yüklenir? (3 Basit Adım)</h3>
+            <p><strong>1.</strong> Ses dosyanızı hazırlayın (MP3 formatı, Türkçe karakter kullanmayın)</p>
+            <p><strong>2.</strong> GitHub repository'nizde <code>uploads</code> klasörüne yükleyin</p>
+            <p><strong>3.</strong> Aşağıdaki formda sadece <strong>dosya adını</strong> yazın (örn:
+                <code>podcast1.mp3</code>)</p>
+            <p style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(212, 175, 55, 0.2);">
+                💡 <strong>İpucu:</strong> GitHub'da dosya yüklemek için: Repository → <code>uploads</code> klasörü →
+                "Add file" → "Upload files"
+            </p>
+        </div>
+
+        <div class="form-section">
+            <h2>➕ Yeni Podcast Ekle</h2>
+            <form id="podcastForm">
+                <div class="form-group">
+                    <label for="title">Podcast Başlığı *</label>
+                    <input type="text" id="title" placeholder="Örn: 2024 Türkiye Ekonomisi Analizi" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Açıklama *</label>
+                    <textarea id="description" rows="3" placeholder="Podcast hakkında kısa açıklama..."
+                        required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="category">Kategori *</label>
+                        <select id="category" required>
+                            <option value="">Kategori Seçin</option>
+                            <option value="makroekonomi">Makroekonomi</option>
+                            <option value="piyasa">Piyasa Analizi</option>
+                            <option value="roportaj">Röportaj</option>
+                            <option value="kripto">Kripto Para</option>
+                            <option value="finans">Kişisel Finans</option>
+                            <option value="yatirim">Yatırım Stratejileri</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="duration">Süre (dakika) *</label>
+                        <input type="number" id="duration" placeholder="45" min="1" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="audioFile">Ses Dosyası Adı *</label>
+                        <input type="text" id="audioFile" placeholder="podcast1.mp3" required>
+                        <small>Sadece dosya adını yazın. Dosyayı önce GitHub'daki 'uploads' klasörüne yükleyin.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="featured">Öne Çıkan</label>
+                        <select id="featured">
+                            <option value="false">Hayır</option>
+                            <option value="true">Evet</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">✅ Podcast Ekle ve data.json İndir</button>
+            </form>
+        </div>
+
+        <div class="podcast-list">
+            <h2>📋 Mevcut Podcast'ler</h2>
+            <div id="podcastList">
+                <!-- Podcasts will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let podcasts = [];
+        const GITHUB_USERNAME = 'KULLANICI_ADINIZ'; // GitHub kullanıcı adınızı buraya yazın
+        const REPO_NAME = 'ekopodcast';
+
+        const categoryNames = {
+            'makroekonomi': 'Makroekonomi',
+            'piyasa': 'Piyasa Analizi',
+            'roportaj': 'Röportaj',
+            'kripto': 'Kripto Para',
+            'finans': 'Kişisel Finans',
+            'yatirim': 'Yatırım Stratejileri'
+        };
+
+        // Load existing podcasts
+        async function loadPodcasts() {
+            try {
+                const response = await fetch('data.json');
+                const data = await response.json();
+                podcasts = data.podcasts || [];
+                renderPodcasts();
+            } catch (error) {
+                console.log('data.json bulunamadı, yeni liste oluşturuluyor...');
+                podcasts = [];
+                renderPodcasts();
+            }
+        }
+
+        // Render podcasts
+        function renderPodcasts() {
+            const container = document.getElementById('podcastList');
+
+            if (podcasts.length === 0) {
+                container.innerHTML = '<p style="color: #a0a0a0; text-align: center;">Henüz podcast eklenmemiş.</p>';
+                return;
+            }
+
+            container.innerHTML = podcasts.map(podcast => `
+                <div class="podcast-item">
+                    <h3>${podcast.title}</h3>
+                    <p>${podcast.description}</p>
+                    <div class="meta">
+                        <span>📁 ${categoryNames[podcast.category]}</span>
+                        <span>⏱️ ${podcast.duration} dk</span>
+                        <span>👁️ ${podcast.listens || 0} dinlenme</span>
+                        <span>📅 ${podcast.date}</span>
+                        ${podcast.featured ? '<span>⭐ Öne Çıkan</span>' : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Add podcast
+        document.getElementById('podcastForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const audioFileName = document.getElementById('audioFile').value.trim();
+            const audioUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/main/uploads/${audioFileName}`;
+
+            const podcast = {
+                id: Date.now(),
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                category: document.getElementById('category').value,
+                duration: parseInt(document.getElementById('duration').value),
+                date: new Date().toISOString().split('T')[0],
+                listens: 0,
+                featured: document.getElementById('featured').value === 'true',
+                audioUrl: audioUrl
+            };
+
+            podcasts.push(podcast);
+            downloadDataJson();
+            this.reset();
+            renderPodcasts();
+
+            alert('✅ Podcast eklendi! data.json dosyası indirildi.\n\nŞimdi bu dosyayı GitHub repository\'nize yükleyin.');
+        });
+
+        // Download data.json
+        function downloadDataJson() {
+            const dataStr = JSON.stringify({ podcasts }, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'data.json';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Load podcasts on page load
+        loadPodcasts();
+    </script>
+</body>
+
+</html>

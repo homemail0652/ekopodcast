@@ -67,9 +67,22 @@ document.addEventListener('DOMContentLoaded', async function () {
     checkUserSession();
 });
 
-// Veri Çekme Fonksiyonu (Önce JSON, sonra Google Sheets, en son varsayılan)
+// Veri Çekme Fonksiyonu (localStorage öncelikli)
 async function loadPodcastsFromSheet() {
-    // 1. Yöntem: data.json dosyasını dene (CMS'ten gelen veriler)
+    // 1. Yöntem: localStorage'dan çek (Kullanıcının eklediği podcast'ler)
+    const savedPodcasts = localStorage.getItem('ekopodcast_data');
+    if (savedPodcasts) {
+        try {
+            podcasts = JSON.parse(savedPodcasts);
+            console.log("localStorage'dan veriler yüklendi:", podcasts);
+            loadPodcasts();
+            return;
+        } catch (error) {
+            console.log("localStorage verisi okunamadı");
+        }
+    }
+
+    // 2. Yöntem: data.json dosyasını dene
     try {
         const response = await fetch('data.json');
         if (response.ok) {
@@ -82,10 +95,10 @@ async function loadPodcastsFromSheet() {
             }
         }
     } catch (error) {
-        console.log("data.json okunamadı, Google Sheets deneniyor...");
+        console.log("data.json okunamadı");
     }
 
-    // 2. Yöntem: Google Sheets CSV
+    // 3. Yöntem: Google Sheets CSV
     if (GOOGLE_SHEET_CSV_URL) {
         try {
             const response = await fetch(GOOGLE_SHEET_CSV_URL);
@@ -103,7 +116,7 @@ async function loadPodcastsFromSheet() {
         }
     }
 
-    // 3. Yöntem: Varsayılan veriler (Hiçbir şey çalışmazsa)
+    // 4. Yöntem: Varsayılan veriler
     console.log("Harici veri kaynağı bulunamadı, varsayılan veriler kullanılıyor.");
     loadPodcasts();
 }
@@ -414,7 +427,7 @@ function handleUploadPodcast(event) {
     event.preventDefault();
 
     const newPodcast = {
-        id: podcasts.length + 1,
+        id: Date.now(),
         title: document.getElementById('podcastTitle').value,
         description: document.getElementById('podcastDescription').value,
         category: document.getElementById('podcastCategory').value,
@@ -427,10 +440,28 @@ function handleUploadPodcast(event) {
 
     podcasts.unshift(newPodcast);
 
+    // localStorage'a kaydet
+    try {
+        localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
+        console.log('Podcast localStorage\'a kaydedildi');
+    } catch (error) {
+        console.error('localStorage kayıt hatası:', error);
+    }
+
+    // data.json indir
+    const dataStr = JSON.stringify({ podcasts }, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'data.json';
+    link.click();
+    URL.revokeObjectURL(url);
+
     closeModal('adminModal');
     loadPodcasts();
 
-    alert('Podcast başarıyla yüklendi!');
+    alert('✅ Podcast başarıyla eklendi!\n\n💾 data.json dosyası indirildi.\nBu dosyayı index.html ile aynı klasöre koyun.');
     event.target.reset();
 }
 

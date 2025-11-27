@@ -6,16 +6,23 @@ media_folder: "uploads"
 public_folder: "/uploads"
 
 collections:
-  - name: "podcasts"
-    label: "Podcasts"
-    folder: "podcasts"
-    create: true
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-    fields:
-      - {label: "Title", name: "title", widget: "string"}
-      - {label: "Description", name: "description", widget: "text"}
-      - {label: "Category", name: "category", widget: "select", options: ["makroekonomi", "kripto", "piyasa", "finans"]}
-      - {label: "Duration (minutes)", name: "duration", widget: "number"}
-      - {label: "Publish Date", name: "date", widget: "datetime"}
-      - {label: "Audio File", name: "audioUrl", widget: "file"}
-      - {label: "Featured", name: "featured", widget: "boolean", default: false}
+  - name: "data"
+    label: "Veri Yönetimi"
+    files:
+      - name: "podcasts"
+        label: "Podcastler"
+        file: "data.json"
+        fields:
+          - label: "Podcast Listesi"
+            name: "podcasts"
+            widget: "list"
+            fields:
+              - {label: "ID (Benzersiz Sayı)", name: "id", widget: "number", value_type: "int"}
+              - {label: "Başlık", name: "title", widget: "string"}
+              - {label: "Açıklama", name: "description", widget: "text"}
+              - {label: "Kategori", name: "category", widget: "select", options: ["makroekonomi", "piyasa", "roportaj", "kripto", "finans", "yatirim"]}
+              - {label: "Süre (Dakika)", name: "duration", widget: "number", value_type: "int"}
+              - {label: "Tarih", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false}
+              - {label: "Dinlenme Sayısı", name: "listens", widget: "number", default: 0, value_type: "int"}
+              - {label: "Öne Çıkan", name: "featured", widget: "boolean", default: false}
+              - {label: "Ses Dosyası", name: "audioUrl", widget: "file"}

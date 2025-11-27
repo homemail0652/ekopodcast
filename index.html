@@ -6,26 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EkoPodcast - Ekonomi ve Finans Podcast Platformu</title>
     <meta name="description"
-        content="Türkiye ve Dünya ekonomisindeki gelişmeleri, uzman analizlerini ve derinlemesine araştırmaları keşfedin.">
-
-    <!-- Google Fonts -->
+        content="Türkiye ve Dünya'daki ekonomik gelişmeleri, derinlemesine araştırma yazılarını ve uzman söyleşilerini barındıran profesyonel podcast platformu.">
+    <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
         rel="stylesheet">
-
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href="styles.css">
-
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-XXXXXXXXXX');
-    </script>
 </head>
 
 <body>
@@ -292,8 +279,11 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="podcastAudio">Ses Dosyası URL</label>
-                        <input type="url" id="podcastAudio" required placeholder="https://example.com/podcast.mp3">
+                        <label for="podcastAudio">Ses Dosyası Adı</label>
+                        <input type="text" id="podcastAudio" required placeholder="podcast1.m4a">
+                        <small style="color: #a0a0a0; font-size: 12px; display: block; margin-top: 5px;">
+                            💡 Sadece dosya adını yazın (örn: podcast1.m4a). Dosyayı index.html ile aynı klasöre koyun.
+                        </small>
                     </div>
                     <button type="submit" class="btn btn-primary btn-full">Podcast Yükle</button>
                 </form>

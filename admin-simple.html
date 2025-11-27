@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EkoPodcast - Basit Yönetim Paneli</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(20, 20, 20, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .header h1 {
+            color: #d4af37;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #a0a0a0;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: rgba(20, 20, 20, 0.95);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .login-container h2 {
+            color: #d4af37;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #a0a0a0;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: #e8e8e8;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            color: #0a0a0a;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #2a2a2a;
+            color: #e8e8e8;
+        }
+
+        .btn-secondary:hover {
+            background: #202020;
+            border-color: #d4af37;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .podcast-form {
+            background: rgba(20, 20, 20, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+            margin-bottom: 30px;
+        }
+
+        .podcast-form h2 {
+            color: #d4af37;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .podcast-list {
+            background: rgba(20, 20, 20, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .podcast-list h2 {
+            color: #d4af37;
+            margin-bottom: 20px;
+        }
+
+        .podcast-item {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .podcast-item h3 {
+            color: #e8e8e8;
+            margin-bottom: 10px;
+        }
+
+        .podcast-item p {
+            color: #a0a0a0;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .podcast-item .meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .podcast-item .meta span {
+            background: rgba(212, 175, 55, 0.1);
+            color: #d4af37;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .podcast-item .actions {
+            display: flex;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .podcast-item .btn {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+            color: #28a745;
+        }
+
+        .alert-error {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+            color: #dc3545;
+        }
+
+        .alert-info {
+            background: rgba(0, 217, 255, 0.2);
+            border: 1px solid #00d9ff;
+            color: #00d9ff;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .logout-btn {
+            float: right;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <h2>🎙️ Yönetim Paneli Girişi</h2>
+        <div id="loginAlert"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="password">Şifre</label>
+                <input type="password" id="password" placeholder="Şifrenizi girin" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Giriş Yap</button>
+        </form>
+        <div
+            style="margin-top: 20px; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3);">
+            <p style="color: #d4af37; font-size: 12px; text-align: center;">
+                ℹ️ Varsayılan şifre: <strong>ekopodcast2025</strong>
+            </p>
+        </div>
+    </div>
+
+    <!-- Admin Content -->
+    <div id="adminContent" class="admin-content">
+        <div class="container">
+            <div class="header">
+                <h1>🎙️ EkoPodcast Yönetim Paneli</h1>
+                <p>Podcast'lerinizi kolayca yönetin</p>
+                <button class="btn btn-secondary logout-btn" onclick="logout()">Çıkış Yap</button>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <!-- Add/Edit Podcast Form -->
+            <div class="podcast-form">
+                <h2 id="formTitle">➕ Yeni Podcast Ekle</h2>
+                <form id="podcastForm">
+                    <input type="hidden" id="editId">
+
+                    <div class="form-group">
+                        <label for="title">Podcast Başlığı *</label>
+                        <input type="text" id="title" placeholder="Örn: 2024 Türkiye Ekonomisi" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Açıklama *</label>
+                        <textarea id="description" rows="3" placeholder="Podcast hakkında kısa açıklama"
+                            required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category">Kategori *</label>
+                            <select id="category" required>
+                                <option value="">Kategori Seçin</option>
+                                <option value="makroekonomi">Makroekonomi</option>
+                                <option value="piyasa">Piyasa Analizi</option>
+                                <option value="roportaj">Röportaj</option>
+                                <option value="kripto">Kripto Para</option>
+                                <option value="finans">Kişisel Finans</option>
+                                <option value="yatirim">Yatırım Stratejileri</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <option value="false">Hayır</option>
+                            <option value="true">Evet</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" class="btn btn-success" id="submitBtn">Podcast Ekle</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()" id="cancelBtn"
+                            style="display: none;">İptal</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Podcast List -->
+            <div class="podcast-list">
+                <h2>📋 Mevcut Podcast'ler</h2>
+                <div id="podcastListContainer">
+                    <!-- Podcasts will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple password (you can change this)
+        const ADMIN_PASSWORD = 'ekopodcast2025';
+        let podcasts = [];
+        let editingId = null;
+
+        // Category names
+        const categoryNames = {
+            'makroekonomi': 'Makroekonomi',
+            'piyasa': 'Piyasa Analizi',
+            'roportaj': 'Röportaj',
+            'kripto': 'Kripto Para',
+            'finans': 'Kişisel Finans',
+            'yatirim': 'Yatırım Stratejileri'
+        };
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+
+            if (password === ADMIN_PASSWORD) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                showAdminPanel();
+            } else {
+                showLoginAlert('Hatalı şifre!', 'error');
+            }
+        });
+
+        function showLoginAlert(message, type) {
+            const alertDiv = document.getElementById('loginAlert');
+            alertDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => alertDiv.innerHTML = '', 3000);
+        }
+
+        function showAdminPanel() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminContent').classList.add('active');
+            loadPodcasts();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            location.reload();
+        }
+
+        // Check if already logged in
+        if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+            showAdminPanel();
+        }
+
+        // Load podcasts from data.json
+        async function loadPodcasts() {
+            try {
+                const response = await fetch('data.json');
+                const data = await response.json();
+                podcasts = data.podcasts || [];
+                renderPodcasts();
+            } catch (error) {
+                showAlert('Podcast\'ler yüklenirken hata oluştu: ' + error.message, 'error');
+            }
+        }
+
+        // Render podcasts
+        function renderPodcasts() {
+            const container = document.getElementById('podcastListContainer');
+
+            if (podcasts.length === 0) {
+                container.innerHTML = '<p style="color: #a0a0a0; text-align: center;">Henüz podcast eklenmemiş.</p>';
+                return;
+            }
+
+            container.innerHTML = podcasts.map(podcast => `
+                <div class="podcast-item">
+                    <h3>${podcast.title}</h3>
+                    <p>${podcast.description}</p>
+                    <div class="meta">
+                        <span>📁 ${categoryNames[podcast.category]}</span>
+                        <span>⏱️ ${podcast.duration} dk</span>
+                        <span>👁️ ${podcast.listens || 0} dinlenme</span>
+                        <span>📅 ${podcast.date}</span>
+                        ${podcast.featured ? '<span>⭐ Öne Çıkan</span>' : ''}
+                    </div>
+                    <div class="actions">
+                        <button class="btn btn-secondary" onclick="editPodcast(${podcast.id})">✏️ Düzenle</button>
+                        <button class="btn btn-danger" onclick="deletePodcast(${podcast.id})">🗑️ Sil</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Add/Edit podcast
+        document.getElementById('podcastForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const podcast = {
+                id: editingId || Date.now(),
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                category: document.getElementById('category').value,
+                duration: parseInt(document.getElementById('duration').value),
+                date: new Date().toISOString().split('T')[0],
+                listens: 0,
+                featured: document.getElementById('featured').value === 'true',
+                audioUrl: document.getElementById('audioUrl').value
+            };
+
+            if (editingId) {
+                // Update existing
+                const index = podcasts.findIndex(p => p.id === editingId);
+                podcasts[index] = { ...podcasts[index], ...podcast };
+                showAlert('Podcast başarıyla güncellendi!', 'success');
+            } else {
+                // Add new
+                podcasts.push(podcast);
+                showAlert('Podcast başarıyla eklendi!', 'success');
+            }
+
+            savePodcasts();
+            resetForm();
+            renderPodcasts();
+        });
+
+        // Edit podcast
+        function editPodcast(id) {
+            const podcast = podcasts.find(p => p.id === id);
+            if (!podcast) return;
+
+            editingId = id;
+            document.getElementById('formTitle').textContent = '✏️ Podcast Düzenle';
+            document.getElementById('submitBtn').textContent = 'Güncelle';
+            document.getElementById('cancelBtn').style.display = 'inline-block';
+
+            document.getElementById('title').value = podcast.title;
+            document.getElementById('description').value = podcast.description;
+            document.getElementById('category').value = podcast.category;
+            document.getElementById('duration').value = podcast.duration;
+            document.getElementById('audioUrl').value = podcast.audioUrl;
+            document.getElementById('featured').value = podcast.featured.toString();
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Delete podcast
+        function deletePodcast(id) {
+            if (!confirm('Bu podcast\'i silmek istediğinizden emin misiniz?')) return;
+
+            podcasts = podcasts.filter(p => p.id !== id);
+            savePodcasts();
+            renderPodcasts();
+            showAlert('Podcast başarıyla silindi!', 'success');
+        }
+
+        // Reset form
+        function resetForm() {
+            editingId = null;
+            document.getElementById('podcastForm').reset();
+            document.getElementById('formTitle').textContent = '➕ Yeni Podcast Ekle';
+            document.getElementById('submitBtn').textContent = 'Podcast Ekle';
+            document.getElementById('cancelBtn').style.display = 'none';
+        }
+
+        // Save podcasts (download as JSON)
+        function savePodcasts() {
+            const dataStr = JSON.stringify({ podcasts }, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'data.json';
+            link.click();
+            URL.revokeObjectURL(url);
+
+            showAlert('data.json dosyası indirildi! Bu dosyayı GitHub\'a yükleyin.', 'info');
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            container.appendChild(alert);
+
+            setTimeout(() => alert.remove(), 5000);
+        }
+    </script>
+</body>
+
+</html>
