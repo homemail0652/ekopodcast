@@ -1,15 +1,37 @@
 {
   "podcasts": [
     {
-      "id": 1764271222270,
-      "title": "Türkiye E-Ticaret Pazarı Giriş ve Risk Analizi",
-      "description": "Bu detaylı rapor, Avrupa merkezli markaların Türkiye’nin dinamik e-ticaret pazarına yönelik stratejik bir giriş yol haritasını ve risk analizini sunmaktadır.",
-      "category": "yatirim",
-      "duration": 13,
-      "date": "2025-11-27",
-      "listens": 0,
-      "featured": false,
-      "audioUrl": "https://drive.google.com/file/d/1jew18roAfF3gMOeedX4a72PEVQ8OG28o/view?usp=drive_link"
+      "id": 1,
+      "title": "2024 Türkiye Ekonomisi: Enflasyon ve Büyüme Beklentileri",
+      "description": "Türkiye ekonomisinin 2024 yılı performansını, enflasyon hedeflerini ve büyüme projeksiyonlarını detaylı olarak inceliyoruz.",
+      "category": "makroekonomi",
+      "duration": 45,
+      "date": "2025-11-20",
+      "listens": 1250,
+      "featured": true,
+      "audioUrl": "#"
+    },
+    {
+      "id": 2,
+      "title": "Kripto Para Piyasalarında Son Gelişmeler",
+      "description": "Bitcoin, Ethereum ve altcoin'lerdeki son hareketleri ve piyasa analizlerini uzmanlarla konuşuyoruz.",
+      "category": "kripto",
+      "duration": 38,
+      "date": "2025-11-18",
+      "listens": 980,
+      "featured": true,
+      "audioUrl": "#"
+    },
+    {
+      "id": 3,
+      "title": "Merkez Bankası Faiz Kararları ve Etkileri",
+      "description": "TCMB'nin son faiz kararlarının piyasalar ve ekonomi üzerindeki etkilerini değerlendiriyoruz.",
+      "category": "piyasa",
+      "duration": 52,
+      "date": "2025-11-15",
+      "listens": 1420,
+      "featured": true,
+      "audioUrl": "#"
     }
   ]
 }
