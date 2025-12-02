@@ -1,17 +1,6 @@
 {
   "podcasts": [
     {
-      "id": 1764711940638,
-      "title": "Podcast1",
-      "description": "Yeni yüklendi. Lütfen düzenleyin.",
-      "category": "makroekonomi",
-      "duration": 0,
-      "date": "2025-12-02",
-      "listens": 0,
-      "featured": false,
-      "audioUrl": "https://raw.githubusercontent.com/homemail0652/ekopodcast/main/uploads/Podcast1.m4a"
-    },
-    {
       "id": 1764711940607,
       "title": "PART B ",
       "description": "Yeni yüklendi. Lütfen düzenleyin.",
