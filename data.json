@@ -10,17 +10,6 @@
       "listens": 0,
       "featured": false,
       "audioUrl": "https://raw.githubusercontent.com/homemail0652/ekopodcast/main/uploads/Türkiye_E_Ticaretine_Giriş.m4a"
-    },
-    {
-      "id": 1,
-      "title": "2024 Türkiye Ekonomisi: Enflasyon ve Büyüme Beklentileri",
-      "description": "Türkiye ekonomisinin 2024 yılı performansını, enflasyon hedeflerini ve büyüme projeksiyonlarını detaylı olarak inceliyoruz.",
-      "category": "makroekonomi",
-      "duration": 45,
-      "date": "2025-11-20",
-      "listens": 1250,
-      "featured": true,
-      "audioUrl": "#"
     }
   ]
 }
