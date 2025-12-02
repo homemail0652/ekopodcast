@@ -32,17 +32,6 @@
       "listens": 980,
       "featured": true,
       "audioUrl": "#"
-    },
-    {
-      "id": 3,
-      "title": "Merkez Bankası Faiz Kararları ve Etkileri",
-      "description": "TCMB'nin son faiz kararlarının piyasalar ve ekonomi üzerindeki etkilerini değerlendiriyoruz.",
-      "category": "piyasa",
-      "duration": 52,
-      "date": "2025-11-15",
-      "listens": 1420,
-      "featured": true,
-      "audioUrl": "#"
     }
   ]
 }
