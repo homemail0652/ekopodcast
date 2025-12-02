@@ -21,17 +21,6 @@
       "listens": 1250,
       "featured": true,
       "audioUrl": "#"
-    },
-    {
-      "id": 2,
-      "title": "Kripto Para Piyasalarında Son Gelişmeler",
-      "description": "Bitcoin, Ethereum ve altcoin'lerdeki son hareketleri ve piyasa analizlerini uzmanlarla konuşuyoruz.",
-      "category": "kripto",
-      "duration": 38,
-      "date": "2025-11-18",
-      "listens": 980,
-      "featured": true,
-      "audioUrl": "#"
     }
   ]
 }
