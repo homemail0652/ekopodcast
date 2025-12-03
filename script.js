@@ -48,6 +48,17 @@ let currentUser = null;
 let listenedPodcasts = JSON.parse(localStorage.getItem('listenedPodcasts') || '[]');
 let comments = JSON.parse(localStorage.getItem('comments') || '{}');
 
+// ✅ ÜYE YÖNETİM SİSTEMİ
+let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+
+// ✅ SİTE İSTATİSTİKLERİ
+let siteStats = JSON.parse(localStorage.getItem('siteStats') || JSON.stringify({
+    totalVisits: 0,
+    totalListens: 0,
+    totalComments: 0,
+    lastVisit: null
+}));
+
 // Category names in Turkish
 const categoryNames = {
     'makroekonomi': 'Makroekonomi',
@@ -62,67 +73,59 @@ const categoryNames = {
 // INITIALIZATION
 // ===================================
 
+// Firebase kullanılıyor mu? (firebase-config.js doluysa true kabul edelim)
+const USE_FIREBASE = typeof firebase !== 'undefined' && typeof firebaseConfig !== 'undefined' && firebaseConfig.apiKey !== "BURAYA_API_KEY_YAPIŞTIRIN";
+
 document.addEventListener('DOMContentLoaded', async function () {
-    await loadPodcastsFromSheet(); // Google Sheets'ten verileri çek
+    console.log('🚀 EkoPodcast Başlatılıyor...');
+
     checkUserSession();
+
+    if (USE_FIREBASE) {
+        console.log('🔥 Firebase Modu Aktif');
+        try {
+            // Ziyaret sayısını artır
+            if (typeof trackVisit === 'function') await trackVisit();
+
+            // Podcastleri Firebase'den yükle
+            const firebasePodcasts = await loadPodcastsFromFirebase();
+            if (firebasePodcasts && firebasePodcasts.length > 0) {
+                podcasts = firebasePodcasts;
+                console.log('✅ Podcastler Firebase\'den yüklendi');
+            }
+
+            // Gerçek zamanlı dinlemeyi başlat
+            listenToPodcasts((updatedPodcasts) => {
+                podcasts = updatedPodcasts;
+                loadPodcasts(); // Arayüzü güncelle
+                console.log('🔄 Veriler güncellendi');
+            });
+
+        } catch (error) {
+            console.error('Firebase başlatma hatası:', error);
+        }
+    } else {
+        console.log('💾 Yerel Mod (LocalStorage) Aktif');
+        // localStorage'dan yükle (Mevcut kod)
+        const savedPodcasts = localStorage.getItem('ekopodcast_data');
+        if (savedPodcasts) {
+            try {
+                podcasts = JSON.parse(savedPodcasts);
+            } catch (e) { console.error(e); }
+        }
+    }
+
+    loadPodcasts();
+
+    // İstatistikleri güncelle (Yerel)
+    if (!USE_FIREBASE) {
+        siteStats.totalListens = podcasts.reduce((sum, p) => sum + p.listens, 0);
+        localStorage.setItem('siteStats', JSON.stringify(siteStats));
+    }
 });
 
-// Veri Çekme Fonksiyonu (localStorage öncelikli)
-async function loadPodcastsFromSheet() {
-    // 1. Yöntem: localStorage'dan çek (Kullanıcının eklediği podcast'ler)
-    const savedPodcasts = localStorage.getItem('ekopodcast_data');
-    if (savedPodcasts) {
-        try {
-            podcasts = JSON.parse(savedPodcasts);
-            console.log("localStorage'dan veriler yüklendi:", podcasts);
-            loadPodcasts();
-            return;
-        } catch (error) {
-            console.log("localStorage verisi okunamadı");
-        }
-    }
-
-    // 2. Yöntem: data.json dosyasını dene
-    try {
-        const response = await fetch('data.json');
-        if (response.ok) {
-            const jsonData = await response.json();
-            if (jsonData && jsonData.podcasts && jsonData.podcasts.length > 0) {
-                podcasts = jsonData.podcasts;
-                console.log("data.json'dan veriler başarıyla çekildi:", podcasts);
-                loadPodcasts();
-                return;
-            }
-        }
-    } catch (error) {
-        console.log("data.json okunamadı");
-    }
-
-    // 3. Yöntem: Google Sheets CSV
-    if (GOOGLE_SHEET_CSV_URL) {
-        try {
-            const response = await fetch(GOOGLE_SHEET_CSV_URL);
-            const data = await response.text();
-            const parsedPodcasts = parseCSV(data);
-
-            if (parsedPodcasts && parsedPodcasts.length > 0) {
-                podcasts = parsedPodcasts;
-                console.log("Google Sheets'ten veriler başarıyla çekildi:", podcasts);
-                loadPodcasts();
-                return;
-            }
-        } catch (error) {
-            console.error("Google Sheets verisi çekilemedi:", error);
-        }
-    }
-
-    // 4. Yöntem: Varsayılan veriler
-    console.log("Harici veri kaynağı bulunamadı, varsayılan veriler kullanılıyor.");
-    loadPodcasts();
-}
-
-// CSV Formatını JSON'a Çevirme (Basit Parser)
 function parseCSV(csvText) {
+    // ... (Mevcut CSV kodu)
     const lines = csvText.split('\n');
     const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
     const result = [];
@@ -163,6 +166,27 @@ function checkUserSession() {
         currentUser = JSON.parse(savedUser);
         updateAuthUI();
     }
+
+    // ✅ Site istatistiklerini güncelle
+    updateSiteStats();
+
+    // ✅ localStorage'dan podcast verilerini yükle (varsa)
+    const savedPodcasts = localStorage.getItem('ekopodcast_data');
+    if (savedPodcasts) {
+        try {
+            podcasts = JSON.parse(savedPodcasts);
+            console.log('✅ Podcast verileri localStorage\'dan yüklendi');
+        } catch (error) {
+            console.error('❌ Podcast yükleme hatası:', error);
+        }
+    }
+}
+
+function updateSiteStats() {
+    siteStats.totalVisits += 1;
+    siteStats.lastVisit = new Date().toISOString();
+    localStorage.setItem('siteStats', JSON.stringify(siteStats));
+    console.log('📊 Site İstatistikleri:', siteStats);
 }
 
 function updateAuthUI() {
@@ -227,22 +251,6 @@ function createPodcastCard(podcast, isFeatured = false) {
                     <svg class="play-icon" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z"/>
                     </svg>
-                </div>
-            </div>
-            <div class="podcast-info">
-                <span class="podcast-category">${categoryName}</span>
-                <h3 class="podcast-title">${podcast.title}</h3>
-                <p class="podcast-description">${podcast.description}</p>
-                <div class="podcast-meta">
-                    <div class="podcast-meta-item">
-                        <svg class="podcast-meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <circle cx="12" cy="12" r="10" stroke-width="2"/>
-                            <polyline points="12 6 12 12 16 14" stroke-width="2"/>
-                        </svg>
-                        <span>${podcast.duration} dk</span>
-                    </div>
-                    <div class="podcast-meta-item">
-                        <svg class="podcast-meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke-width="2"/>
                             <circle cx="12" cy="12" r="3" stroke-width="2"/>
                         </svg>
@@ -276,6 +284,23 @@ function openPodcast(podcastId) {
     if (!currentUser && !hasListened) {
         listenedPodcasts.push(podcastId);
         localStorage.setItem('listenedPodcasts', JSON.stringify(listenedPodcasts));
+    }
+
+    // ✅ DİNLEME SAYACINI ARTIR
+    if (USE_FIREBASE) {
+        incrementListenCount(podcastId).then(() => {
+            console.log('🔥 Firebase dinleme sayısı artırıldı');
+        });
+        podcast.listens += 1; // Arayüzde hemen göster
+    } else {
+        podcast.listens += 1;
+        try {
+            localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
+            console.log('✅ Dinleme sayısı güncellendi (Local):', podcast.listens);
+        } catch (error) {
+            console.error('❌ localStorage kayıt hatası:', error);
+        }
+        updateDataJson();
     }
 
     const playerContent = document.getElementById('playerContent');
@@ -376,6 +401,10 @@ function handleAddComment(event, podcastId) {
 
     localStorage.setItem('comments', JSON.stringify(comments));
 
+    // ✅ İstatistikleri güncelle
+    siteStats.totalComments += 1;
+    localStorage.setItem('siteStats', JSON.stringify(siteStats));
+
     // Reload the podcast player to show new comment
     openPodcast(podcastId);
 }
@@ -400,12 +429,27 @@ function handleRegister(event) {
     event.preventDefault();
     const email = document.getElementById('registerEmail').value;
 
+    // ✅ Üyeyi kayıt listesine ekle
+    if (USE_FIREBASE) {
+        registerUserToFirebase(email).then(() => {
+            console.log('🔥 Üye Firebase\'e kaydedildi');
+        });
+    } else {
+        const newUser = {
+            email: email,
+            registeredAt: new Date().toISOString(),
+            notificationsEnabled: true
+        };
+        registeredUsers.push(newUser);
+        localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+    }
+
     currentUser = { email };
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
     closeModal('registerModal');
     updateAuthUI();
-    alert('Başarıyla üye oldunuz!');
+    alert('Başarıyla üye oldunuz! 🎉\n\nYeni podcast yüklendiğinde bildirim alacaksınız.');
 }
 
 function handleLogout() {
@@ -438,14 +482,27 @@ function handleUploadPodcast(event) {
         audioUrl: document.getElementById('podcastAudio').value
     };
 
-    podcasts.unshift(newPodcast);
+    // ✅ Firebase'e veya Local'e Kaydet
+    if (USE_FIREBASE) {
+        // ID'yi string yap (Firebase için daha iyi)
+        newPodcast.id = newPodcast.id.toString();
 
-    // localStorage'a kaydet
-    try {
-        localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
-        console.log('Podcast localStorage\'a kaydedildi');
-    } catch (error) {
-        console.error('localStorage kayıt hatası:', error);
+        addPodcastToFirebase(newPodcast).then(() => {
+            console.log('🔥 Podcast Firebase\'e yüklendi');
+            alert('✅ Podcast Firebase\'e başarıyla yüklendi!');
+        });
+
+        // Local listeye de ekle (görünüm için)
+        // podcasts.unshift(newPodcast); // Gerek yok, listenToPodcasts halledecek
+    } else {
+        podcasts.unshift(newPodcast);
+        // localStorage'a kaydet
+        try {
+            localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
+            console.log('Podcast localStorage\'a kaydedildi');
+        } catch (error) {
+            console.error('localStorage kayıt hatası:', error);
+        }
     }
 
     // data.json indir
@@ -580,3 +637,98 @@ function scrollToContent() {
         content.scrollIntoView({ behavior: 'smooth' });
     }
 }
+
+// ===================================
+// DATA MANAGEMENT FUNCTIONS
+// ===================================
+
+function updateDataJson() {
+    // data.json'u otomatik güncelle ve indir
+    const dataStr = JSON.stringify({ podcasts }, null, 2);
+    console.log('📝 data.json güncellendi (localStorage)');
+    // Not: Gerçek dosya güncellemesi için backend gerekir
+}
+
+// ===================================
+// ADMIN FUNCTIONS
+// ===================================
+
+// Üye listesini göster
+function showMembersList() {
+    const membersList = registeredUsers.map((user, index) => {
+        const date = new Date(user.registeredAt).toLocaleDateString('tr-TR');
+        const time = new Date(user.registeredAt).toLocaleTimeString('tr-TR');
+        return `${index + 1}. ${user.email} - Kayıt: ${date} ${time}`;
+    }).join('\n');
+
+    const message = registeredUsers.length > 0
+        ? `📋 KAYITLI ÜYELER (${registeredUsers.length}):\n\n${membersList}\n\n💡 Bu liste tarayıcınızda saklanmaktadır.`
+        : '❌ Henüz kayıtlı üye bulunmamaktadır.';
+
+    alert(message);
+
+    // Console'a da yazdır
+    console.log('👥 Kayıtlı Üyeler:', registeredUsers);
+}
+
+// Site istatistiklerini göster
+function showSiteStats() {
+    const stats = `
+📊 SİTE İSTATİSTİKLERİ
+
+👥 Toplam Ziyaret: ${siteStats.totalVisits}
+🎧 Toplam Dinleme: ${siteStats.totalListens}
+💬 Toplam Yorum: ${siteStats.totalComments}
+📅 Son Ziyaret: ${siteStats.lastVisit ? new Date(siteStats.lastVisit).toLocaleString('tr-TR') : 'Henüz yok'}
+
+📚 Toplam Podcast: ${podcasts.length}
+👤 Kayıtlı Üye: ${registeredUsers.length}
+
+💡 Bu veriler tarayıcınızda saklanmaktadır.
+    `.trim();
+
+    alert(stats);
+    console.log('📊 Site İstatistikleri:', siteStats);
+}
+
+// Üyelere mail gönderme simülasyonu
+function notifyMembers(podcastTitle) {
+    if (registeredUsers.length === 0) {
+        console.log('⚠️ Bildirim gönderilecek üye yok');
+        return;
+    }
+
+    const emailList = registeredUsers
+        .filter(user => user.notificationsEnabled)
+        .map(user => user.email);
+
+    console.log('📧 YENİ PODCAST BİLDİRİMİ GÖNDERİLDİ:');
+    console.log('Podcast:', podcastTitle);
+    console.log('Alıcılar:', emailList);
+    console.log(`Toplam ${emailList.length} üyeye bildirim gönderildi.`);
+
+    // Gerçek mail gönderimi için backend servisi gerekir
+    // Örnek: EmailJS, SendGrid, vs.
+}
+
+// ===================================
+// INITIALIZATION
+// ===================================
+
+// Sayfa yüklendiğinde çalışacak
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('🚀 EkoPodcast Başlatılıyor...');
+
+    checkUserSession();
+    loadPodcasts();
+
+    // Dinleme istatistiğini güncelle
+    siteStats.totalListens = podcasts.reduce((sum, p) => sum + p.listens, 0);
+    localStorage.setItem('siteStats', JSON.stringify(siteStats));
+
+    console.log('✅ EkoPodcast Hazır!');
+    console.log('💡 Komutlar:');
+    console.log('  - showMembersList() : Üye listesini göster');
+    console.log('  - showSiteStats() : Site istatistiklerini göster');
+});
+
