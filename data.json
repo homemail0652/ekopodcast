@@ -1,6 +1,17 @@
 {
   "podcasts": [
     {
+      "id": 1764773253187,
+      "title": "Ekonomik Modeller ve Kalkınma Stratejileri",
+      "description": "Açıklama girilmedi. Düzenle butonuna basarak ekleyin.",
+      "category": "genel",
+      "duration": 0,
+      "date": "2025-12-03",
+      "listens": 0,
+      "featured": false,
+      "audioUrl": "https://raw.githubusercontent.com/homemail0652/ekopodcast/main/uploads/Ekonomik_Modeller_ve_Kalkınma_Stratejileri.m4a"
+    },
+    {
       "id": 1764711264704,
       "title": "Türkiye E Ticaretine Giriş",
       "description": "\"Türkiye E Ticaretine Giriş\" üzerine keyifli bir podcast.",
