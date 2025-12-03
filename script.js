@@ -83,27 +83,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     if (USE_FIREBASE) {
         console.log('🔥 Firebase Modu Aktif');
-        try {
-            // Ziyaret sayısını artır
-            if (typeof trackVisit === 'function') await trackVisit();
-
-            // Podcastleri Firebase'den yükle
-            const firebasePodcasts = await loadPodcastsFromFirebase();
-            if (firebasePodcasts && firebasePodcasts.length > 0) {
-                podcasts = firebasePodcasts;
-                console.log('✅ Podcastler Firebase\'den yüklendi');
-            }
-
-            // Gerçek zamanlı dinlemeyi başlat
-            listenToPodcasts((updatedPodcasts) => {
-                podcasts = updatedPodcasts;
-                loadPodcasts(); // Arayüzü güncelle
-                console.log('🔄 Veriler güncellendi');
-            });
-
-        } catch (error) {
-            console.error('Firebase başlatma hatası:', error);
-        }
     } else {
         console.log('💾 Yerel Mod (LocalStorage) Aktif');
         // localStorage'dan yükle (Mevcut kod)
