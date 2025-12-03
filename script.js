@@ -73,8 +73,8 @@ const categoryNames = {
 // INITIALIZATION
 // ===================================
 
-// Firebase kullanılıyor mu? (firebase-config.js doluysa true kabul edelim)
-const USE_FIREBASE = typeof firebase !== 'undefined' && typeof firebaseConfig !== 'undefined' && firebaseConfig.apiKey !== "BURAYA_API_KEY_YAPIŞTIRIN";
+// Firebase kullanılıyor mu?
+const USE_FIREBASE = true;
 
 document.addEventListener('DOMContentLoaded', async function () {
     console.log('🚀 EkoPodcast Başlatılıyor...');
@@ -83,27 +83,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     if (USE_FIREBASE) {
         console.log('🔥 Firebase Modu Aktif');
-        try {
-            // Ziyaret sayısını artır
-            if (typeof trackVisit === 'function') await trackVisit();
-
-            // Podcastleri Firebase'den yükle
-            const firebasePodcasts = await loadPodcastsFromFirebase();
-            if (firebasePodcasts && firebasePodcasts.length > 0) {
-                podcasts = firebasePodcasts;
-                console.log('✅ Podcastler Firebase\'den yüklendi');
-            }
-
-            // Gerçek zamanlı dinlemeyi başlat
-            listenToPodcasts((updatedPodcasts) => {
-                podcasts = updatedPodcasts;
-                loadPodcasts(); // Arayüzü güncelle
-                console.log('🔄 Veriler güncellendi');
-            });
-
-        } catch (error) {
-            console.error('Firebase başlatma hatası:', error);
-        }
     } else {
         console.log('💾 Yerel Mod (LocalStorage) Aktif');
         // localStorage'dan yükle (Mevcut kod)
@@ -716,19 +695,5 @@ function notifyMembers(podcastTitle) {
 // ===================================
 
 // Sayfa yüklendiğinde çalışacak
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('🚀 EkoPodcast Başlatılıyor...');
-
-    checkUserSession();
-    loadPodcasts();
-
-    // Dinleme istatistiğini güncelle
-    siteStats.totalListens = podcasts.reduce((sum, p) => sum + p.listens, 0);
-    localStorage.setItem('siteStats', JSON.stringify(siteStats));
-
-    console.log('✅ EkoPodcast Hazır!');
-    console.log('💡 Komutlar:');
-    console.log('  - showMembersList() : Üye listesini göster');
-    console.log('  - showSiteStats() : Site istatistiklerini göster');
-});
+// Eski başlatma kodu silindi (Yukarıdaki yeni kod kullanılıyor)
 
