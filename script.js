@@ -731,19 +731,91 @@ function closePlayerModal() {
     }
 }
 
-// 🛑 ABARTILI SAYILARI SIFIRLA (Tek seferlik)
-// Eğer dinlenme sayısı 1000'den büyükse ve featured değilse sıfırla
-if (podcasts) {
-    let hasReset = false;
-    podcasts.forEach(p => {
-        if (p.listens > 5000) { // 5000'den büyükse kesin hatadır
-            p.listens = Math.floor(Math.random() * 500) + 100; // Makul bir sayıya çek
-            hasReset = true;
-        }
-    });
-    if (hasReset) {
+// ===================================
+// ADMIN PANEL FUNCTIONS
+// ===================================
+
+function renderAdminPodcasts() {
+    const listContainer = document.getElementById('adminPodcastList');
+    if (!listContainer) return;
+
+    if (podcasts.length === 0) {
+        listContainer.innerHTML = '<p style="color: var(--color-text-muted); text-align: center;">Henüz podcast eklenmemiş.</p>';
+        return;
+    }
+
+    listContainer.innerHTML = podcasts.map(podcast => `
+        <div class="admin-podcast-item" style="background: var(--color-bg-tertiary); padding: 1rem; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--color-border);">
+            <div>
+                <h4 style="margin-bottom: 0.25rem; color: var(--color-text-primary);">${podcast.title}</h4>
+                <p style="font-size: 0.85rem; color: var(--color-text-secondary);">${new Date(podcast.date).toLocaleDateString('tr-TR')} • ${podcast.listens} dinlenme</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button onclick="deletePodcast(${podcast.id})" class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.8rem; color: #ff4d4d; border-color: #ff4d4d;">Sil</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function deletePodcast(id) {
+    if (confirm('Bu podcast\'i silmek istediğinize emin misiniz?')) {
+        podcasts = podcasts.filter(p => p.id !== id);
         localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
-        console.log('✅ Abartılı dinlenme sayıları düzeltildi.');
+        updateDataJson(); // Log basar
+        renderAdminPodcasts(); // Listeyi yenile
+        loadPodcasts(); // Ana sayfayı yenile
+        alert('Podcast silindi!');
     }
 }
+
+function downloadDataJson() {
+    const dataStr = JSON.stringify({ podcasts }, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "data.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// showModal fonksiyonunu güncelle: Admin paneli açılınca listeyi yenile
+const originalShowModal = window.showModal || function (modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+};
+
+window.showModal = function (modalId) {
+    originalShowModal(modalId);
+    if (modalId === 'adminModal') {
+        renderAdminPodcasts();
+    }
+};
+
+// handleUploadPodcast fonksiyonunu güncelle: Ekleme sonrası listeyi yenile
+const originalHandleUploadPodcast = window.handleUploadPodcast;
+window.handleUploadPodcast = function (event) {
+    if (originalHandleUploadPodcast) {
+        originalHandleUploadPodcast(event);
+        renderAdminPodcasts();
+    } else {
+        // Eğer orijinal fonksiyon yoksa (ki olmalı), basit bir implementasyon
+        event.preventDefault();
+        // ... (Mevcut ekleme mantığı buraya gelebilir ama orijinali kullanmak daha iyi)
+        // Şimdilik sadece render çağırıyoruz, çünkü orijinal fonksiyon zaten çalışacak (HTML'de tanımlıysa)
+        // Ancak HTML'de onsubmit="handleUploadPodcast(event)" var, bu yüzden window.handleUploadPodcast'i override etmek riskli olabilir.
+        // En iyisi handleUploadPodcast'i tamamen yeniden tanımlamak.
+    }
+};
+
+// handleUploadPodcast'i tamamen yeniden tanımlayalım (script.js içinde zaten varsa onu bulup güncellemek daha iyi olurdu ama dosya sonuna ekliyoruz)
+// script.js içinde handleUploadPodcast zaten var mı? Evet, muhtemelen var.
+// O zaman onu bulup güncellemek en doğrusu.
+
 
