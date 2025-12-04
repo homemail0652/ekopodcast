@@ -42,6 +42,9 @@
                     <a href="#" class="nav-link" onclick="showAllPodcasts(); return false;">Tüm Podcastler</a>
                     <a href="#" class="nav-link" onclick="showCategories(); return false;">Kategoriler</a>
                     <a href="#" class="nav-link" onclick="showAdminPanel(); return false;">Yönetim Paneli</a>
+                    <!-- YENİ: Admin Butonları -->
+                    <a href="#" class="nav-link" onclick="showMembersList(); return false;" title="Üye Listesi">👥</a>
+                    <a href="#" class="nav-link" onclick="showSiteStats(); return false;" title="İstatistikler">📊</a>
                 </nav>
 
                 <div class="auth-buttons">
@@ -291,15 +294,7 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
-    <!-- Firebase Config ve Functions -->
-    <script src="firebase-config.js"></script>
-    <script src="firebase-functions.js"></script>
-
-    <!-- Admin Helper Script -->
+    <!-- YENİ: Admin Helper Script -->
     <script src="admin-helpers.js"></script>
     <script src="script.js"></script>
 </body>

@@ -1,59 +1,37 @@
 {
   "podcasts": [
     {
-      "id": 1764775716435,
-      "title": "Avrupa' nın Sessiz Krizi Sanayi Tekliyor",
-      "description": "Avrupa Birliği Ekonomisinin Karşı Karşıya Olduğu Derin Yapısal Zorluklar Üzerine Güzel Bir Podcast.",
-      "category": "finans",
-      "duration": 20,
-      "date": "2025-12-03",
-      "listens": 0,
-      "featured": false,
-      "audioUrl": "https://raw.githubusercontent.com/homemail0652/ekopodcast/main/uploads/Avrupa'_nın_Sessiz_Krizi_Sanayi_Tekliyor.m4a"
+      "id": 1,
+      "title": "2024 Türkiye Ekonomisi: Enflasyon ve Büyüme Beklentileri",
+      "description": "Türkiye ekonomisinin 2024 yılı performansını, enflasyon hedeflerini ve büyüme projeksiyonlarını detaylı olarak inceliyoruz.",
+      "category": "makroekonomi",
+      "duration": 45,
+      "date": "2025-11-20",
+      "listens": 1250,
+      "featured": true,
+      "audioUrl": "#"
     },
     {
-      "id": 1764775344990,
-      "title": "Karbon Maliyeti Raporlama Zorunluluğu Kimi Vuracak",
-      "description": "Sınırda Karbon Düzenlemesi Mekanizması Ve Kurumsal Sürdürülebilirlik Raporlama Direktifi Gibi Uluslararası Düzenlemelere Yönelik Bir Podcast.",
-      "category": "finans",
-      "duration": 19,
-      "date": "2025-12-03",
-      "listens": 0,
-      "featured": false,
-      "audioUrl": "https://raw.githubusercontent.com/homemail0652/ekopodcast/main/uploads/Karbon_Maliyeti_Raporlama_Zorunluluğu_Kimi_Vuracak.m4a"
+      "id": 2,
+      "title": "Kripto Para Piyasalarında Son Gelişmeler",
+      "description": "Bitcoin, Ethereum ve altcoin'lerdeki son hareketleri ve piyasa analizlerini uzmanlarla konuşuyoruz.",
+      "category": "kripto",
+      "duration": 38,
+      "date": "2025-11-18",
+      "listens": 980,
+      "featured": true,
+      "audioUrl": "#"
     },
     {
-      "id": 1764774890117,
-      "title": "ABD' nin Vergileri Neden Almanya' yı Etkiliyor ",
-      "description": "ABD Çin'e Vergi Uyguladı, Almanya Etkilendi. Peki Neden? İşte Bu Podcastte. ",
-      "category": "finans",
-      "duration": 19,
-      "date": "2025-12-03",
-      "listens": 0,
-      "featured": false,
-      "audioUrl": "https://raw.githubusercontent.com/homemail0652/ekopodcast/main/uploads/ABD'_nin_Vergileri_Neden_Almanya'_yı_Etkiliyor_.m4a"
-    },
-    {
-      "id": 1764773253187,
-      "title": "Ekonomik Modeller ve Kalkınma Stratejileri",
-      "description": "Kalkınma ve Ekonomik zorluklara yönelik güzel bir podcast",
-      "category": "finans",
-      "duration": 17,
-      "date": "2025-12-03",
-      "listens": 0,
-      "featured": false,
-      "audioUrl": "https://raw.githubusercontent.com/homemail0652/ekopodcast/main/uploads/Ekonomik_Modeller_ve_Kalkınma_Stratejileri.m4a"
-    },
-    {
-      "id": 1764711264704,
-      "title": "Türkiye E Ticaretine Giriş",
-      "description": "\"Türkiye E Ticaretine Giriş\" üzerine keyifli bir podcast.",
-      "category": "yatirim",
-      "duration": 13,
-      "date": "2025-12-02",
-      "listens": 0,
-      "featured": false,
-      "audioUrl": "https://raw.githubusercontent.com/homemail0652/ekopodcast/main/uploads/Türkiye_E_Ticaretine_Giriş.m4a"
+      "id": 3,
+      "title": "Merkez Bankası Faiz Kararları ve Etkileri",
+      "description": "TCMB'nin son faiz kararlarının piyasalar ve ekonomi üzerindeki etkilerini değerlendiriyoruz.",
+      "category": "piyasa",
+      "duration": 52,
+      "date": "2025-11-15",
+      "listens": 1420,
+      "featured": true,
+      "audioUrl": "#"
     }
   ]
 }

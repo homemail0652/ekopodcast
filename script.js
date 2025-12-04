@@ -73,34 +73,32 @@ const categoryNames = {
 // INITIALIZATION
 // ===================================
 
-// Firebase kullanılıyor mu?
-const USE_FIREBASE = true;
-
 document.addEventListener('DOMContentLoaded', async function () {
     console.log('🚀 EkoPodcast Başlatılıyor...');
 
-    checkUserSession();
+    // Önce data.json'dan yüklemeyi dene
+    await fetchPodcastsFromDataJson();
 
-    if (USE_FIREBASE) {
-        console.log('🔥 Firebase Modu Aktif');
-    } else {
-        console.log('💾 Yerel Mod (LocalStorage) Aktif');
-        // localStorage'dan yükle (Mevcut kod)
+    // Eğer data.json boşsa veya yüklenemediyse ve localStorage varsa oradan devam eder
+    if (podcasts.length <= 3) { // 3 varsayılan veri sayısı
         const savedPodcasts = localStorage.getItem('ekopodcast_data');
         if (savedPodcasts) {
             try {
-                podcasts = JSON.parse(savedPodcasts);
+                const localPodcasts = JSON.parse(savedPodcasts);
+                if (localPodcasts.length > podcasts.length) {
+                    podcasts = localPodcasts;
+                    console.log('💾 LocalStorage verileri kullanıldı');
+                }
             } catch (e) { console.error(e); }
         }
     }
 
+    checkUserSession();
     loadPodcasts();
 
     // İstatistikleri güncelle (Yerel)
-    if (!USE_FIREBASE) {
-        siteStats.totalListens = podcasts.reduce((sum, p) => sum + p.listens, 0);
-        localStorage.setItem('siteStats', JSON.stringify(siteStats));
-    }
+    siteStats.totalListens = podcasts.reduce((sum, p) => sum + (p.listens || 0), 0);
+    localStorage.setItem('siteStats', JSON.stringify(siteStats));
 });
 
 function parseCSV(csvText) {
@@ -265,22 +263,14 @@ function openPodcast(podcastId) {
         localStorage.setItem('listenedPodcasts', JSON.stringify(listenedPodcasts));
     }
 
-    // ✅ DİNLEME SAYACINI ARTIR
-    if (USE_FIREBASE) {
-        incrementListenCount(podcastId).then(() => {
-            console.log('🔥 Firebase dinleme sayısı artırıldı');
-        });
-        podcast.listens += 1; // Arayüzde hemen göster
-    } else {
-        podcast.listens += 1;
-        try {
-            localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
-            console.log('✅ Dinleme sayısı güncellendi (Local):', podcast.listens);
-        } catch (error) {
-            console.error('❌ localStorage kayıt hatası:', error);
-        }
-        updateDataJson();
+    podcast.listens += 1;
+    try {
+        localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
+        console.log('✅ Dinleme sayısı güncellendi (Local):', podcast.listens);
+    } catch (error) {
+        console.error('❌ localStorage kayıt hatası:', error);
     }
+    updateDataJson();
 
     const playerContent = document.getElementById('playerContent');
     const categoryName = categoryNames[podcast.category] || podcast.category;
@@ -309,54 +299,81 @@ function openPodcast(podcastId) {
         `).join('') :
         '<p style="color: var(--color-text-muted); text-align: center;">Henüz yorum yapılmamış.</p>';
 
+    const audioUrl = convertDriveLink(podcast.audioUrl);
+
     playerContent.innerHTML = `
         <div class="player-container">
             ${warningHtml}
             <div class="player-header">
-                <div class="player-thumbnail">
-                    <svg style="width: 100%; height: 100%; opacity: 0.2;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" stroke-width="2"/>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2" stroke-width="2"/>
-                        <line x1="12" y1="19" x2="12" y2="22" stroke-width="2"/>
-                    </svg>
+                <div class="player-info">
+                    <h3>${podcast.title}</h3>
+                    <p>${categoryName} • ${podcast.duration} dk</p>
                 </div>
-                <div class="player-details">
-                    <span class="player-category">${categoryName}</span>
-                    <h2 class="player-title">${podcast.title}</h2>
-                    <p class="player-description">${podcast.description}</p>
-                    <div class="player-meta">
-                        <span>⏱️ ${podcast.duration} dakika</span>
-                        <span>👁️ ${podcast.listens} dinlenme</span>
-                        <span>📅 ${new Date(podcast.date).toLocaleDateString('tr-TR')}</span>
-                    </div>
-                </div>
+                <button class="close-btn" onclick="closePlayerModal()">&times;</button>
             </div>
-            <div class="player-audio">
-                <audio controls>
-                    <source src="${podcast.audioUrl}" type="audio/mpeg">
-                    Tarayıcınız ses dosyasını desteklemiyor.
+            
+            <div class="audio-wrapper">
+                <audio controls autoplay style="width: 100%; margin: 1rem 0;">
+                    <source src="${audioUrl}" type="audio/mpeg">
+                    <source src="${audioUrl}" type="audio/mp4">
+                    Tarayıcınız ses elementini desteklemiyor.
                 </audio>
             </div>
+
+            <div class="player-description">
+                <h4>Bölüm Hakkında</h4>
+                <p>${podcast.description}</p>
+            </div>
+
             <div class="comments-section">
-                <h3 class="comments-title">Yorumlar (${podcastComments.length})</h3>
-                ${commentFormHtml}
-                <div class="comment-list">
+                <h4>Yorumlar (${podcastComments.length})</h4>
+                <div class="comments-list">
                     ${commentsHtml}
                 </div>
+                ${commentFormHtml}
             </div>
         </div>
     `;
-
-    showModal('playerModal');
 }
 
-function closePlayerModal() {
-    closeModal('playerModal');
+// ✅ Google Drive Link Dönüştürücü
+function convertDriveLink(url) {
+    if (!url) return '#';
+    // Eğer zaten düzgün formatsa dokunma
+    if (url.includes('export=download')) return url;
+
+    // Drive linki mi?
+    if (url.includes('drive.google.com')) {
+        // ID'yi bul
+        const idMatch = url.match(/[-\w]{25,}/);
+        if (idMatch) {
+            return `https://drive.google.com/uc?export=download&id=${idMatch[0]}`;
+        }
+    }
+    return url;
 }
 
-// ===================================
-// COMMENTS
-// ===================================
+async function fetchPodcastsFromDataJson() {
+    try {
+        const response = await fetch('data.json?t=' + Date.now());
+        if (response.ok) {
+            const data = await response.json();
+            if (data.podcasts && Array.isArray(data.podcasts)) {
+                podcasts = data.podcasts;
+                console.log('✅ data.json başarıyla yüklendi:', podcasts.length, 'podcast');
+                loadPodcasts();
+
+                // İstatistikleri güncelle
+                if (!USE_FIREBASE) {
+                    siteStats.totalListens = podcasts.reduce((sum, p) => sum + (p.listens || 0), 0);
+                    localStorage.setItem('siteStats', JSON.stringify(siteStats));
+                }
+            }
+        }
+    } catch (error) {
+        console.warn('⚠️ data.json yüklenemedi:', error);
+    }
+}
 
 function handleAddComment(event, podcastId) {
     event.preventDefault();
@@ -409,19 +426,13 @@ function handleRegister(event) {
     const email = document.getElementById('registerEmail').value;
 
     // ✅ Üyeyi kayıt listesine ekle
-    if (USE_FIREBASE) {
-        registerUserToFirebase(email).then(() => {
-            console.log('🔥 Üye Firebase\'e kaydedildi');
-        });
-    } else {
-        const newUser = {
-            email: email,
-            registeredAt: new Date().toISOString(),
-            notificationsEnabled: true
-        };
-        registeredUsers.push(newUser);
-        localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
-    }
+    const newUser = {
+        email: email,
+        registeredAt: new Date().toISOString(),
+        notificationsEnabled: true
+    };
+    registeredUsers.push(newUser);
+    localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
 
     currentUser = { email };
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -462,26 +473,13 @@ function handleUploadPodcast(event) {
     };
 
     // ✅ Firebase'e veya Local'e Kaydet
-    if (USE_FIREBASE) {
-        // ID'yi string yap (Firebase için daha iyi)
-        newPodcast.id = newPodcast.id.toString();
-
-        addPodcastToFirebase(newPodcast).then(() => {
-            console.log('🔥 Podcast Firebase\'e yüklendi');
-            alert('✅ Podcast Firebase\'e başarıyla yüklendi!');
-        });
-
-        // Local listeye de ekle (görünüm için)
-        // podcasts.unshift(newPodcast); // Gerek yok, listenToPodcasts halledecek
-    } else {
-        podcasts.unshift(newPodcast);
-        // localStorage'a kaydet
-        try {
-            localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
-            console.log('Podcast localStorage\'a kaydedildi');
-        } catch (error) {
-            console.error('localStorage kayıt hatası:', error);
-        }
+    podcasts.unshift(newPodcast);
+    // localStorage'a kaydet
+    try {
+        localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
+        console.log('Podcast localStorage\'a kaydedildi');
+    } catch (error) {
+        console.error('localStorage kayıt hatası:', error);
     }
 
     // data.json indir
@@ -510,14 +508,14 @@ function filterByCategory(category) {
     const mainContent = document.querySelector('.content-main');
 
     mainContent.innerHTML = `
-        <section class="section">
+        < section class="section" >
             <div class="section-header">
                 <h2 class="section-title">${categoryNames[category]}</h2>
                 <p class="section-subtitle">${filteredPodcasts.length} podcast bulundu</p>
             </div>
             <div class="podcast-grid" id="filtered-podcasts"></div>
-        </section>
-    `;
+        </section >
+        `;
 
     renderPodcasts(filteredPodcasts, 'filtered-podcasts');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -527,14 +525,14 @@ function showAllPodcasts() {
     const mainContent = document.querySelector('.content-main');
 
     mainContent.innerHTML = `
-        <section class="section">
+        < section class="section" >
             <div class="section-header">
                 <h2 class="section-title">Tüm Podcastler</h2>
                 <p class="section-subtitle">${podcasts.length} podcast bulundu</p>
             </div>
             <div class="podcast-grid" id="all-podcasts"></div>
-        </section>
-    `;
+        </section >
+        `;
 
     renderPodcasts(podcasts, 'all-podcasts');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -546,7 +544,7 @@ function showCategories() {
     const categoriesHtml = Object.keys(categoryNames).map(category => {
         const count = podcasts.filter(p => p.category === category).length;
         return `
-            <div class="podcast-card" onclick="filterByCategory('${category}')">
+        < div class="podcast-card" onclick = "filterByCategory('${category}')" >
                 <div class="podcast-thumbnail">
                     <svg class="podcast-thumbnail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <rect x="3" y="3" width="7" height="7" stroke-width="2"/>
@@ -559,12 +557,12 @@ function showCategories() {
                     <h3 class="podcast-title">${categoryNames[category]}</h3>
                     <p class="podcast-description">${count} podcast</p>
                 </div>
-            </div>
+            </div >
         `;
     }).join('');
 
     mainContent.innerHTML = `
-        <section class="section">
+        < section class="section" >
             <div class="section-header">
                 <h2 class="section-title">Kategoriler</h2>
                 <p class="section-subtitle">İlgilendiğiniz kategoriyi seçin</p>
@@ -572,8 +570,8 @@ function showCategories() {
             <div class="podcast-grid">
                 ${categoriesHtml}
             </div>
-        </section>
-    `;
+        </section >
+        `;
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -637,11 +635,11 @@ function showMembersList() {
     const membersList = registeredUsers.map((user, index) => {
         const date = new Date(user.registeredAt).toLocaleDateString('tr-TR');
         const time = new Date(user.registeredAt).toLocaleTimeString('tr-TR');
-        return `${index + 1}. ${user.email} - Kayıt: ${date} ${time}`;
+        return `${index + 1}. ${user.email} - Kayıt: ${date} ${time} `;
     }).join('\n');
 
     const message = registeredUsers.length > 0
-        ? `📋 KAYITLI ÜYELER (${registeredUsers.length}):\n\n${membersList}\n\n💡 Bu liste tarayıcınızda saklanmaktadır.`
+        ? `📋 KAYITLI ÜYELER(${registeredUsers.length}): \n\n${membersList} \n\n💡 Bu liste tarayıcınızda saklanmaktadır.`
         : '❌ Henüz kayıtlı üye bulunmamaktadır.';
 
     alert(message);
