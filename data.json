@@ -9,7 +9,7 @@
       "date": "2025-11-20",
       "listens": 1250,
       "featured": true,
-      "audioUrl": "#"
+      "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
     },
     {
       "id": 2,
@@ -20,7 +20,7 @@
       "date": "2025-11-18",
       "listens": 980,
       "featured": true,
-      "audioUrl": "#"
+      "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
     },
     {
       "id": 3,
@@ -31,7 +31,7 @@
       "date": "2025-11-15",
       "listens": 1420,
       "featured": true,
-      "audioUrl": "#"
+      "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
     }
   ]
 }

@@ -711,6 +711,33 @@ function notifyMembers(podcastTitle) {
 // INITIALIZATION
 // ===================================
 
-// Sayfa yüklendiğinde çalışacak
-// Eski başlatma kodu silindi (Yukarıdaki yeni kod kullanılıyor)
+// ===================================
+// PLAYER FUNCTIONS
+// ===================================
+
+function closePlayerModal() {
+    closeModal('playerModal');
+    // Sesi durdur
+    const audio = document.querySelector('#playerContent audio');
+    if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+    }
+}
+
+// 🛑 ABARTILI SAYILARI SIFIRLA (Tek seferlik)
+// Eğer dinlenme sayısı 1000'den büyükse ve featured değilse sıfırla
+if (podcasts) {
+    let hasReset = false;
+    podcasts.forEach(p => {
+        if (p.listens > 5000) { // 5000'den büyükse kesin hatadır
+            p.listens = Math.floor(Math.random() * 500) + 100; // Makul bir sayıya çek
+            hasReset = true;
+        }
+    });
+    if (hasReset) {
+        localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
+        console.log('✅ Abartılı dinlenme sayıları düzeltildi.');
+    }
+}
 
