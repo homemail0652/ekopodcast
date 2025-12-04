@@ -278,14 +278,15 @@ function openPodcast(podcastId) {
         localStorage.setItem('listenedPodcasts', JSON.stringify(listenedPodcasts));
     }
 
-    podcast.listens += 1;
-    try {
-        localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
-        console.log('✅ Dinleme sayısı güncellendi (Local):', podcast.listens);
-    } catch (error) {
-        console.error('❌ localStorage kayıt hatası:', error);
-    }
-    updateDataJson();
+    // 🛑 GEÇİCİ OLARAK KAPATILDI: Sonsuz döngü sorunu nedeniyle
+    // podcast.listens += 1;
+    // try {
+    //     localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
+    //     console.log('✅ Dinleme sayısı güncellendi (Local):', podcast.listens);
+    // } catch (error) {
+    //     console.error('❌ localStorage kayıt hatası:', error);
+    // }
+    // updateDataJson();
 
     const playerContent = document.getElementById('playerContent');
     const categoryName = categoryNames[podcast.category] || podcast.category;
@@ -349,6 +350,9 @@ function openPodcast(podcastId) {
             </div>
         </div>
     `;
+
+    // ✅ MODAL'I GÖSTER
+    showModal('playerModal');
 }
 
 // ✅ Google Drive Link Dönüştürücü
