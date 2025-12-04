@@ -230,11 +230,24 @@ function createPodcastCard(podcast, isFeatured = false) {
                     <svg class="play-icon" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z"/>
                     </svg>
+                </div>
+            </div>
+            <div class="podcast-content">
+                <div class="podcast-meta">
+                    <span class="podcast-category">${categoryName}</span>
+                    <span class="podcast-duration">${podcast.duration} dk</span>
+                </div>
+                <h3 class="podcast-title">${podcast.title}</h3>
+                <p class="podcast-description">${podcast.description}</p>
+                <div class="podcast-footer">
+                    <div class="podcast-stats">
+                        <svg class="stats-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke-width="2"/>
                             <circle cx="12" cy="12" r="3" stroke-width="2"/>
                         </svg>
                         <span>${podcast.listens}</span>
                     </div>
+                    <span class="podcast-date">${new Date(podcast.date).toLocaleDateString('tr-TR')}</span>
                 </div>
             </div>
         </div>
