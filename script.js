@@ -2,6 +2,8 @@
 // DATA MANAGEMENT
 // ===================================
 
+const USE_FIREBASE = false; // Firebase kullanımı kapalı
+
 // Google Sheets CSV Linki (Burası sizin tablonuzun linki olacak)
 // Örnek: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR......../pub?output=csv"
 const GOOGLE_SHEET_CSV_URL = "";
