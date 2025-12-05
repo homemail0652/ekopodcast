@@ -1,3 +1,15 @@
 {
-  "podcasts": []
+  "podcasts": [
+    {
+      "id": 1764979079009,
+      "title": "Karbon Maliyeti Raporlama Zorunluluğu Kimi Vuracak",
+      "description": "Yeni podcast",
+      "category": "makroekonomi",
+      "duration": 30,
+      "date": "2025-12-05",
+      "listens": 0,
+      "featured": false,
+      "audioUrl": "uploads/Karbon_Maliyeti_Raporlama_Zorunluluğu_Kimi_Vuracak.m4a"
+    }
+  ]
 }
