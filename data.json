@@ -1,6 +1,17 @@
 {
   "podcasts": [
     {
+      "id": 1765051151233,
+      "title": "ABD' nin Vergileri Neden Almanya' yı Etkiliyor ",
+      "description": "Yeni podcast",
+      "category": "makroekonomi",
+      "duration": 30,
+      "date": "2025-12-06",
+      "listens": 0,
+      "featured": false,
+      "audioUrl": "uploads/ABD'_nin_Vergileri_Neden_Almanya'_yı_Etkiliyor_.m4a"
+    },
+    {
       "id": 1765050552229,
       "title": "Topraksız Tarım ve Yapay Zeka Devrimi",
       "description": "Topraksız tarım uygulamaları üzerine güzel bir podcast",
