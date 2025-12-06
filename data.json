@@ -1,6 +1,17 @@
 {
   "podcasts": [
     {
+      "id": 1765045224108,
+      "title": "Ekonomik Modeller ve Kalkınma Stratejileri",
+      "description": "Yeni podcast",
+      "category": "makroekonomi",
+      "duration": 30,
+      "date": "2025-12-06",
+      "listens": 0,
+      "featured": false,
+      "audioUrl": "uploads/Ekonomik_Modeller_ve_Kalkınma_Stratejileri.m4a"
+    },
+    {
       "id": 1765044983137,
       "title": "ABD' nin Vergileri Neden Almanya' yı Etkiliyor ",
       "description": "ABD Çin'in tarifelerini arttırdı olan Almanya' ya oldu. ",
