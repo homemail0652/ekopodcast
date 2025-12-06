@@ -1,6 +1,17 @@
 {
   "podcasts": [
     {
+      "id": 1765045829689,
+      "title": "Topraksız Tarım ve Yapay Zeka Devrimi",
+      "description": "Yeni podcast",
+      "category": "makroekonomi",
+      "duration": 30,
+      "date": "2025-12-06",
+      "listens": 0,
+      "featured": false,
+      "audioUrl": "uploads/Topraksız_Tarım_ve_Yapay_Zeka_Devrimi.m4a"
+    },
+    {
       "id": 1765045603592,
       "title": "Avrupa Neden ABD ve Çin' in Gerisinde Kaldı",
       "description": "Avrupa' nın neden yeniden yapılanması gerektiği üzerine bir podcast",
