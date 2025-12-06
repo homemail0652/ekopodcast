@@ -1,6 +1,17 @@
 {
   "podcasts": [
     {
+      "id": 1765051591676,
+      "title": "Karbon Maliyeti Raporlama Zorunluluğu Kimi Vuracak",
+      "description": "Yeni podcast",
+      "category": "makroekonomi",
+      "duration": 30,
+      "date": "2025-12-06",
+      "listens": 0,
+      "featured": false,
+      "audioUrl": "uploads/Karbon_Maliyeti_Raporlama_Zorunluluğu_Kimi_Vuracak.m4a"
+    },
+    {
       "id": 1765051396320,
       "title": "Avrupa Neden ABD ve Çin' in Gerisinde Kaldı",
       "description": "ABD ve Çin Avrupa' nın çok ilerisinde. Güzel bir podcast.",
