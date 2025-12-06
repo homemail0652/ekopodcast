@@ -1,6 +1,17 @@
 {
   "podcasts": [
     {
+      "id": 1765051396320,
+      "title": "Avrupa Neden ABD ve Çin' in Gerisinde Kaldı",
+      "description": "Yeni podcast",
+      "category": "makroekonomi",
+      "duration": 30,
+      "date": "2025-12-06",
+      "listens": 0,
+      "featured": false,
+      "audioUrl": "uploads/Avrupa_Neden_ABD_ve_Çin'_in_Gerisinde_Kaldı.m4a"
+    },
+    {
       "id": 1765051151233,
       "title": "ABD' nin Vergileri Neden Almanya' yı Etkiliyor ",
       "description": "ABD Çin' e tarife uyguladı. Olan Almanya' ya oldu.",
