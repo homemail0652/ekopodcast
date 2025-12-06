@@ -2,11 +2,8 @@
 // DATA MANAGEMENT
 // ===================================
 
-// 🧹 TEMİZ BAŞLANGIÇ: Her şeyi sıfırla
-try {
-    localStorage.clear();
-    console.log('🧹 Tüm veriler temizlendi (Temiz Başlangıç)');
-} catch (e) { console.error(e); }
+// ⚠️ localStorage.clear() KALDIRILDI - Podcast verilerini siliyordu!
+// Artık veriler korunuyor
 
 const USE_FIREBASE = false; // Firebase kullanımı kapalı
 

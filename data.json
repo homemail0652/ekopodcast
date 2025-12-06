@@ -1,43 +1,76 @@
 {
   "podcasts": [
     {
-      "id": 1733445600000,
-      "title": "2024 Türkiye Ekonomisi: Enflasyon ve Büyüme Beklentileri",
-      "description": "Türkiye ekonomisinin 2024 yılı performansını, enflasyon hedeflerini ve büyüme projeksiyonlarını detaylı olarak inceliyoruz.",
+      "id": 1733500000001,
+      "title": "ABD'nin Vergileri Neden Almanya'yı Etkiliyor",
+      "description": "ABD'nin vergi politikalarının Almanya ekonomisi üzerindeki etkilerini detaylı olarak inceliyoruz.",
       "category": "makroekonomi",
-      "duration": 45,
+      "duration": 25,
       "date": "2024-12-06",
-      "listens": 1250,
+      "listens": 0,
       "featured": true,
-      "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      "audioUrl": "ABD'nin Vergileri Neden Almanya'yı Etkiliyor.m4a"
     },
     {
-      "id": 1733359200000,
-      "title": "Kripto Para Piyasalarında Son Gelişmeler",
-      "description": "Bitcoin, Ethereum ve altcoin'lerdeki son hareketleri ve piyasa analizlerini uzmanlarla konuşuyoruz.",
-      "category": "kripto",
-      "duration": 38,
-      "date": "2024-12-05",
-      "listens": 980,
+      "id": 1733500000002,
+      "title": "Avrupa Neden ABD ve Çin'in Gerisinde Kaldı",
+      "description": "Avrupa ekonomisinin ABD ve Çin karşısındaki durumunu ve nedenlerini analiz ediyoruz.",
+      "category": "makroekonomi",
+      "duration": 30,
+      "date": "2024-12-06",
+      "listens": 0,
       "featured": true,
-      "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+      "audioUrl": "Avrupa Neden ABD ve Çin'in Gerisinde Kaldı.m4a"
     },
     {
-      "id": 1733272800000,
-      "title": "Merkez Bankası Faiz Kararları ve Etkileri",
-      "description": "TCMB'nin son faiz kararlarının piyasalar ve ekonomi üzerindeki etkilerini değerlendiriyoruz.",
+      "id": 1733500000003,
+      "title": "Avrupa'nın Sessiz Krizi Sanayi Tekliyior",
+      "description": "Avrupa'nın sanayi sektöründeki kriz ve geleceğe dair öngörüler.",
       "category": "piyasa",
-      "duration": 52,
-      "date": "2024-12-04",
-      "listens": 1420,
+      "duration": 28,
+      "date": "2024-12-06",
+      "listens": 0,
       "featured": true,
-      "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+      "audioUrl": "Avrupa'nın Sessiz Krizi Sanayi Tekliyior.m4a"
+    },
+    {
+      "id": 1733500000004,
+      "title": "Ekonomik Modeller ve Kalkınma Stratejileri",
+      "description": "Farklı ekonomik modeller ve ülkelerin kalkınma stratejilerini karşılaştırıyoruz.",
+      "category": "makroekonomi",
+      "duration": 35,
+      "date": "2024-12-06",
+      "listens": 0,
+      "featured": true,
+      "audioUrl": "Ekonomik Modeller ve Kalkınma Stratejileri.m4a"
+    },
+    {
+      "id": 1733500000005,
+      "title": "Karbon Maliyeti Raporlama Zorunluluğu Kimi Vuracak",
+      "description": "Karbon maliyeti raporlama zorunluluğunun şirketler ve ekonomi üzerindeki etkileri.",
+      "category": "piyasa",
+      "duration": 22,
+      "date": "2024-12-06",
+      "listens": 0,
+      "featured": true,
+      "audioUrl": "Karbon Maliyeti Raporlama Zorunluluğu Kimi Vuracak.m4a"
+    },
+    {
+      "id": 1733500000006,
+      "title": "Topraksız Tarım ve Yapay Zeka Devrimi",
+      "description": "Topraksız tarım teknolojileri ve yapay zekanın tarım sektöründeki devrimci etkileri.",
+      "category": "yatirim",
+      "duration": 26,
+      "date": "2024-12-06",
+      "listens": 0,
+      "featured": true,
+      "audioUrl": "Topraksız Tarım ve Yapay Zeka Devrimi.m4a"
     }
   ],
   "stats": {
     "totalVisits": 0,
-    "totalListens": 3650,
+    "totalListens": 0,
     "totalComments": 0,
-    "lastVisit": "2025-12-06T19:08:05.000Z"
+    "lastVisit": "2025-12-06T19:17:41.000Z"
   }
 }
