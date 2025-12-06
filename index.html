@@ -282,8 +282,26 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="podcastAudio">Ses Dosyası Adı</label>
-                        <script src="script.js"></script>
+                        <label for="podcastAudio">Ses Dosyası URL</label>
+                        <input type="url" id="podcastAudio" required placeholder="https://example.com/audio.mp3">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Podcast Ekle</button>
+                </form>
+
+                <hr style="margin: 2rem 0; border-color: var(--color-border);">
+
+                <h3 style="margin-bottom: 1rem;">Mevcut Podcastler</h3>
+                <div id="adminPodcastList"></div>
+
+                <button onclick="downloadDataJson()" class="btn btn-secondary" style="margin-top: 1rem; width: 100%;">
+                    💾 data.json İndir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="visitor-counter.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>
