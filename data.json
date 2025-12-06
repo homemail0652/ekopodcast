@@ -32,17 +32,6 @@
       "listens": 0,
       "featured": true,
       "audioUrl": "uploads/Avrupa_Sanayi.m4a"
-    },
-    {
-      "id": 1733500000004,
-      "title": "Ekonomik Modeller ve Kalkınma Stratejileri",
-      "description": "Farklı ekonomik modeller ve ülkelerin kalkınma stratejilerini karşılaştırıyoruz.",
-      "category": "makroekonomi",
-      "duration": 35,
-      "date": "2024-12-06",
-      "listens": 0,
-      "featured": true,
-      "audioUrl": "uploads/Ekonomik_Modeller.m4a"
     }
   ]
 }
