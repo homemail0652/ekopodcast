@@ -172,6 +172,10 @@ function updateSiteStats() {
     siteStats.lastVisit = new Date().toISOString();
     localStorage.setItem('siteStats', JSON.stringify(siteStats));
     console.log('📊 Site İstatistikleri:', siteStats);
+
+    // ✅ Ziyaretçi sayısını data.json'a kaydet (indirme için)
+    // Not: Gerçek zamanlı senkronizasyon için backend gerekir
+    // Şimdilik localStorage'da tutuyoruz
 }
 
 function updateAuthUI() {
@@ -284,15 +288,14 @@ function openPodcast(podcastId) {
         localStorage.setItem('listenedPodcasts', JSON.stringify(listenedPodcasts));
     }
 
-    // 🛑 GEÇİCİ OLARAK KAPATILDI: Sonsuz döngü sorunu nedeniyle
-    // podcast.listens += 1;
-    // try {
-    //     localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
-    //     console.log('✅ Dinleme sayısı güncellendi (Local):', podcast.listens);
-    // } catch (error) {
-    //     console.error('❌ localStorage kayıt hatası:', error);
-    // }
-    // updateDataJson();
+    // ✅ Dinleme sayısını artır
+    podcast.listens += 1;
+    try {
+        localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
+        console.log('✅ Dinleme sayısı güncellendi (Local):', podcast.listens);
+    } catch (error) {
+        console.error('❌ localStorage kayıt hatası:', error);
+    }
 
     const playerContent = document.getElementById('playerContent');
     const categoryName = categoryNames[podcast.category] || podcast.category;
@@ -323,6 +326,13 @@ function openPodcast(podcastId) {
 
     const audioUrl = convertDriveLink(podcast.audioUrl);
 
+    // ✅ Paylaşma butonu HTML'i (Web Share API desteği kontrolü ile)
+    const shareButtonHtml = `
+        <button class="btn btn-primary" onclick="sharePodcast(${podcastId})" style="width: 100%; margin-top: 1rem;">
+            📤 Bu Podcast'i Paylaş
+        </button>
+    `;
+
     playerContent.innerHTML = `
         <div class="player-container">
             ${warningHtml}
@@ -346,6 +356,8 @@ function openPodcast(podcastId) {
                 <h4>Bölüm Hakkında</h4>
                 <p>${podcast.description}</p>
             </div>
+            
+            ${shareButtonHtml}
 
             <div class="comments-section">
                 <h4>Yorumlar (${podcastComments.length})</h4>
@@ -386,6 +398,16 @@ async function fetchPodcastsFromDataJson() {
             if (data.podcasts && Array.isArray(data.podcasts)) {
                 podcasts = data.podcasts;
                 console.log('✅ data.json başarıyla yüklendi:', podcasts.length, 'podcast');
+
+                // ✅ İstatistikleri de yükle (varsa)
+                if (data.stats) {
+                    // Mevcut ziyaret sayısını koru, sadece diğer istatistikleri güncelle
+                    const currentVisits = siteStats.totalVisits;
+                    siteStats = { ...data.stats, totalVisits: currentVisits };
+                    localStorage.setItem('siteStats', JSON.stringify(siteStats));
+                    console.log('✅ İstatistikler data.json\'dan yüklendi:', siteStats);
+                }
+
                 loadPodcasts();
 
                 // İstatistikleri güncelle
@@ -769,7 +791,13 @@ function deletePodcast(id) {
 }
 
 function downloadDataJson() {
-    const dataStr = JSON.stringify({ podcasts }, null, 2);
+    // ✅ İstatistikleri güncelle
+    siteStats.totalListens = podcasts.reduce((sum, p) => sum + (p.listens || 0), 0);
+
+    const dataStr = JSON.stringify({
+        podcasts,
+        stats: siteStats // İstatistikleri de ekle
+    }, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(blob);
 
@@ -780,6 +808,12 @@ function downloadDataJson() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+
+    alert('✅ data.json indirildi!\n\n📊 İstatistikler:\n' +
+        `• Toplam Ziyaret: ${siteStats.totalVisits}\n` +
+        `• Toplam Dinleme: ${siteStats.totalListens}\n` +
+        `• Toplam Yorum: ${siteStats.totalComments}\n\n` +
+        '💡 Bu dosyayı GitHub\'a yükleyerek tüm cihazlardan güncel verilere erişebilirsiniz.');
 }
 
 // showModal fonksiyonunu güncelle: Admin paneli açılınca listeyi yenile
@@ -818,4 +852,69 @@ window.handleUploadPodcast = function (event) {
 // script.js içinde handleUploadPodcast zaten var mı? Evet, muhtemelen var.
 // O zaman onu bulup güncellemek en doğrusu.
 
+// ===================================
+// PAYLAŞMA FONKSİYONU
+// ===================================
+
+function sharePodcast(podcastId) {
+    const podcast = podcasts.find(p => p.id === podcastId);
+    if (!podcast) return;
+
+    const shareData = {
+        title: `EkoPodcast: ${podcast.title}`,
+        text: `${podcast.description}\n\nKategori: ${categoryNames[podcast.category] || podcast.category}\nSüre: ${podcast.duration} dk`,
+        url: window.location.href
+    };
+
+    // Web Share API destekleniyorsa (mobil cihazlarda)
+    if (navigator.share) {
+        navigator.share(shareData)
+            .then(() => console.log('✅ Podcast başarıyla paylaşıldı'))
+            .catch((error) => {
+                console.log('❌ Paylaşım iptal edildi veya hata oluştu:', error);
+                // Fallback: Kopyala
+                fallbackShare(shareData);
+            });
+    } else {
+        // Masaüstü için fallback: Clipboard'a kopyala
+        fallbackShare(shareData);
+    }
+}
+
+function fallbackShare(shareData) {
+    const shareText = `${shareData.title}\n\n${shareData.text}\n\n${shareData.url}`;
+
+    // Clipboard API kullan
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareText)
+            .then(() => {
+                alert('📋 Podcast bilgileri panoya kopyalandı!\n\nİstediğiniz yere yapıştırabilirsiniz.');
+            })
+            .catch(() => {
+                // Eski yöntem
+                legacyCopyToClipboard(shareText);
+            });
+    } else {
+        // Eski tarayıcılar için
+        legacyCopyToClipboard(shareText);
+    }
+}
+
+function legacyCopyToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.select();
+
+    try {
+        document.execCommand('copy');
+        alert('📋 Podcast bilgileri panoya kopyalandı!\n\nİstediğiniz yere yapıştırabilirsiniz.');
+    } catch (err) {
+        alert('❌ Kopyalama başarısız oldu. Lütfen manuel olarak kopyalayın:\n\n' + text);
+    }
+
+    document.body.removeChild(textArea);
+}
 
