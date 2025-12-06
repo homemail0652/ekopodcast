@@ -43,17 +43,6 @@
       "listens": 0,
       "featured": true,
       "audioUrl": "uploads/Ekonomik_Modeller.m4a"
-    },
-    {
-      "id": 1733500000006,
-      "title": "Topraksız Tarım ve Yapay Zeka Devrimi",
-      "description": "Topraksız tarım teknolojileri ve yapay zekanın tarım sektöründeki devrimci etkileri.",
-      "category": "yatirim",
-      "duration": 26,
-      "date": "2024-12-06",
-      "listens": 0,
-      "featured": true,
-      "audioUrl": "uploads/Topraksiz_Tarim.m4a"
     }
   ]
 }
