@@ -153,15 +153,22 @@ function checkUserSession() {
     updateSiteStats();
 
     // ✅ localStorage'dan podcast verilerini yükle (varsa)
+    // savedPodcasts iptal edildi - data.json her zaman öncelikli olmalı
+    /*
     const savedPodcasts = localStorage.getItem('ekopodcast_data');
     if (savedPodcasts) {
         try {
-            podcasts = JSON.parse(savedPodcasts);
-            console.log('✅ Podcast verileri localStorage\'dan yüklendi');
+            const localData = JSON.parse(savedPodcasts);
+            // Sadece eğer data.json boşsa local veriyi kullan
+            if (podcasts.length === 0) {
+                 podcasts = localData;
+                 console.log('✅ Podcast verileri localStorage\'dan yüklendi (data.json boştu)');
+            }
         } catch (error) {
             console.error('❌ Podcast yükleme hatası:', error);
         }
     }
+    */
 }
 
 function updateSiteStats() {

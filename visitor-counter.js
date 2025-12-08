@@ -5,7 +5,9 @@
 // CountAPI.xyz - Ücretsiz sayaç servisi
 const COUNTER_NAMESPACE = 'ekopodcast';
 const COUNTER_KEY = 'site-visits';
-const COUNTER_API = `https://api.countapi.xyz`;
+// CountAPI.xyz servisi kapandığı için geçici olarak devre dışı bırakıldı
+// const COUNTER_API = `https://api.countapi.xyz`;
+const COUNTER_API = null;
 
 // Sayfa yüklendiğinde ziyaretçi sayısını artır
 async function incrementVisitorCount() {
