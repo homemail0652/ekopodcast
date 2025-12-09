@@ -559,13 +559,13 @@ function filterByCategory(category) {
     const mainContent = document.querySelector('.content-main');
 
     mainContent.innerHTML = `
-        < section class="section" >
+        <section class="section">
             <div class="section-header">
                 <h2 class="section-title">${categoryNames[category]}</h2>
                 <p class="section-subtitle">${filteredPodcasts.length} podcast bulundu</p>
             </div>
             <div class="podcast-grid" id="filtered-podcasts"></div>
-        </section >
+        </section>
         `;
 
     renderPodcasts(filteredPodcasts, 'filtered-podcasts');
@@ -576,13 +576,13 @@ function showAllPodcasts() {
     const mainContent = document.querySelector('.content-main');
 
     mainContent.innerHTML = `
-        < section class="section" >
+        <section class="section">
             <div class="section-header">
                 <h2 class="section-title">Tüm Podcastler</h2>
                 <p class="section-subtitle">${podcasts.length} podcast bulundu</p>
             </div>
             <div class="podcast-grid" id="all-podcasts"></div>
-        </section >
+        </section>
         `;
 
     renderPodcasts(podcasts, 'all-podcasts');
@@ -595,7 +595,7 @@ function showCategories() {
     const categoriesHtml = Object.keys(categoryNames).map(category => {
         const count = podcasts.filter(p => p.category === category).length;
         return `
-        < div class="podcast-card" onclick = "filterByCategory('${category}')" >
+        <div class="podcast-card" onclick="filterByCategory('${category}')">
                 <div class="podcast-thumbnail">
                     <svg class="podcast-thumbnail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <rect x="3" y="3" width="7" height="7" stroke-width="2"/>
@@ -608,12 +608,12 @@ function showCategories() {
                     <h3 class="podcast-title">${categoryNames[category]}</h3>
                     <p class="podcast-description">${count} podcast</p>
                 </div>
-            </div >
+            </div>
         `;
     }).join('');
 
     mainContent.innerHTML = `
-        < section class="section" >
+        <section class="section">
             <div class="section-header">
                 <h2 class="section-title">Kategoriler</h2>
                 <p class="section-subtitle">İlgilendiğiniz kategoriyi seçin</p>
@@ -621,7 +621,7 @@ function showCategories() {
             <div class="podcast-grid">
                 ${categoriesHtml}
             </div>
-        </section >
+        </section>
         `;
 
     window.scrollTo({ top: 0, behavior: 'smooth' });

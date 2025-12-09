@@ -12,6 +12,7 @@ const COUNTER_API = null;
 // Sayfa yüklendiğinde ziyaretçi sayısını artır
 async function incrementVisitorCount() {
     try {
+        if (!COUNTER_API) throw new Error('Counter API is disabled');
         const response = await fetch(`${COUNTER_API}/hit/${COUNTER_NAMESPACE}/${COUNTER_KEY}`);
         const data = await response.json();
 
