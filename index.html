@@ -16,6 +16,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
         rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="app-icon.png">
 </head>
 
 <body>
@@ -306,6 +309,19 @@
 
     <script src="visitor-counter.js?v=2.4"></script>
     <script src="script.js?v=2.4"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker başarıyla kaydedildi:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker kaydı başarısız:', error);
+                    });
+            });
+        }
+    </script>
 </body>
 
 </html>

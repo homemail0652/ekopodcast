@@ -1,0 +1,22 @@
+{
+    "name": "EkoPodcast",
+    "short_name": "EkoPodcast",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#0f172a",
+    "theme_color": "#0f172a",
+    "orientation": "portrait",
+    "description": "Ekonomi ve Finans Podcast Platformu",
+    "icons": [
+        {
+            "src": "./app-icon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "./app-icon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ]
+}
