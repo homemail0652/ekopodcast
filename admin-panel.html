@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EkoPodcast Yönetim Paneli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #eab308;
+            /* Gold */
+            --accent-hover: #ca8a04;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            color: var(--accent);
+            font-size: 1.8rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* YÜKLEME ALANI */
+        .upload-section {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 2px dashed var(--border);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .upload-section:hover {
+            border-color: var(--accent);
+        }
+
+        .btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-secondary {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        /* PODCAST LİSTESİ */
+        .podcast-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .podcast-item {
+            background: var(--bg-card);
+            border-radius: 0.8rem;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+        }
+
+        .podcast-info h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .podcast-meta {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .podcast-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* MODAL (DÜZENLEME) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* TOKEN GİRİŞİ */
+        #tokenModal {
+            z-index: 2000;
+        }
+
+        /* PROGRESS BAR */
+        #progressContainer {
+            display: none;
+            margin-top: 1.5rem;
+            background: var(--bg-dark);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            height: 10px;
+            border: 1px solid var(--border);
+        }
+
+        #progressBar {
+            width: 0%;
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .status-sync {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <div>
+                <h1>🎙️ EkoPodcast Yönetim</h1>
+                <div class="subtitle">Podcast yükle, düzenle ve yönet</div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn btn-secondary btn-sm" onclick="openEmailSettings()">📧 Email Ayarları</button>
+                <button class="btn btn-secondary btn-sm" onclick="syncFiles()">🔄 Kayıp Dosyaları Bul</button>
+                <button class="btn btn-secondary btn-sm" onclick="loadData()">📄 Listeyi Yenile</button>
+                <button class="btn btn-secondary btn-sm" onclick="resetToken()">🔑 Token Sıfırla</button>
+            </div>
+        </header>
+
+        <!-- YÜKLEME ALANI -->
+        <div class="upload-section">
+            <h2 style="margin-bottom: 1rem;">Yeni Podcast Yükle</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                Ses dosyasını seçin. Sistem otomatik olarak yükleyecek ve taslak olarak ekleyecektir.
+                <br>Daha sonra aşağıdan başlık ve açıklamayı düzenleyebilirsiniz.
+            </p>
+
+            <input type="file" id="fileInput" accept="audio/*" style="display: none" onchange="handleFileSelect(this)">
+            <button class="btn" id="uploadBtn" onclick="document.getElementById('fileInput').click()">
+                📁 Dosya Seç ve Yükle
+            </button>
+
+            <!-- Progress Bar -->
+            <div id="progressContainer">
+                <div id="progressBar"></div>
+            </div>
+
+            <div id="uploadStatus" style="margin-top: 1rem; font-weight: 600;"></div>
+        </div>
+
+        <!-- LİSTE -->
+        <h2 style="margin-bottom: 1rem;">Podcast Listesi</h2>
+        <div id="podcastList" class="podcast-list">
+            <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">Yükleniyor...</div>
+        </div>
+    </div>
+
+    <!-- DÜZENLEME MODALI -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1.5rem;">Podcast Düzenle</h2>
+            <form id="editForm" onsubmit="savePodcast(event)">
+                <input type="hidden" id="editId">
+
+                <div class="form-group">
+                    <label>Başlık</label>
+                    <input type="text" id="editTitle" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Açıklama</label>
+                    <textarea id="editDescription" class="form-control" rows="3" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select id="editCategory" class="form-control">
+                        <option value="makroekonomi">Makroekonomi</option>
+                        <option value="piyasa">Piyasa Analizi</option>
+                        <option value="roportaj">Röportaj</option>
+                        <option value="kripto">Kripto Para</option>
+                        <option value="finans">Kişisel Finans</option>
+                        <option value="yatirim">Yatırım Stratejileri</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Süre (Dakika)</label>
+                    <input type="number" id="editDuration" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Ses Dosyası URL (Değiştirmeyin)</label>
+                    <input type="text" id="editAudioUrl" class="form-control" readonly style="opacity: 0.5;">
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editModal')"
+                        style="flex: 1;">İptal</button>
+                    <button type="submit" class="btn" style="flex: 1;">💾 Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EMAIL AYARLARI MODALI -->
+    <div id="emailSettingsModal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1rem;">📧 Email Bildirim Ayarları</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">
+                EmailJS servisini kullanarak üyelerinize bildirim gönderebilirsiniz (Ücretsiz).
+                <br><a href="https://www.emailjs.com/" target="_blank" style="color: var(--accent);">EmailJS'den hesap
+                    oluşturun</a>
+            </p>
+
+            <div class="form-group">
+                <label>EmailJS Public Key</label>
+                <input type="text" id="emailPublicKey" class="form-control" placeholder="Örn: user_...">
+            </div>
+
+            <div class="form-group">
+                <label>Service ID</label>
+                <input type="text" id="emailServiceId" class="form-control" placeholder="Örn: service_...">
+            </div>
+
+            <div class="form-group">
+                <label>Template ID</label>
+                <input type="text" id="emailTemplateId" class="form-control" placeholder="Örn: template_...">
+            </div>
+
+            <div
+                style="background: rgba(234, 179, 8, 0.1); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.85rem;">
+                <strong>💡 İpucu:</strong> EmailJS şablonunuzda şu değişkenleri kullanın:
+                <code>{{title}}</code>, <code>{{description}}</code>, <code>{{link}}</code>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('emailSettingsModal')"
+                    style="flex: 1;">İptal</button>
+                <button type="button" class="btn" onclick="saveEmailSettings()" style="flex: 1;">💾 Kaydet</button>
+            </div>
+
+            <hr style="margin: 2rem 0; border-color: var(--border);">
+
+            <h3 style="margin-bottom: 1rem;">👥 Abone Yönetimi</h3>
+            <div class="form-group">
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="email" id="newSubscriberEmail" class="form-control" placeholder="yeni@abone.com">
+                    <button class="btn btn-secondary" onclick="addSubscriber()">Ekle</button>
+                </div>
+            </div>
+            <div id="subscribersList"
+                style="max-height: 150px; overflow-y: auto; background: var(--bg-dark); padding: 0.5rem; border-radius: 0.5rem; border: 1px solid var(--border);">
+                Yükleniyor...
+            </div>
+            <div style="text-align: right; margin-top: 0.5rem;">
+                <small id="subscriberCount" style="color: var(--text-secondary);">0 abone</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOKEN MODALI -->
+    <div id="tokenModal" class="modal">
+        <div class="modal-content">
+            <h2>🔑 GitHub Bağlantısı</h2>
+            <p style="color: var(--text-secondary); margin: 1rem 0;">
+                Yönetim paneline erişmek için GitHub Token'ınızı girin.
+                <br><small>(Sadece bir kez sorulacak)</small>
+            </p>
+            <input type="password" id="tokenInput" class="form-control" placeholder="ghp_..."
+                style="margin-bottom: 1rem;">
+            <button class="btn" onclick="saveToken()" style="width: 100%;">Giriş Yap</button>
+            <p style="margin-top: 1rem; font-size: 0.85rem;">
+                <a href="https://github.com/settings/tokens/new?scopes=repo&description=EkoPodcast%20Admin"
+                    target="_blank" style="color: var(--accent);">Token Almak İçin Tıklayın</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <script>
+        // AYARLAR
+        const USERNAME = 'homemail0652';
+        const REPO = 'EkoPodcast';
+        let GITHUB_TOKEN = localStorage.getItem('ekopodcast_token');
+        let podcasts = [];
+        let subscribers = [];
+        let sha = null;
+        let subscribersSha = null;
+
+        // BAŞLANGIÇ
+        window.onload = function () {
+            if (!GITHUB_TOKEN) {
+                document.getElementById('tokenModal').classList.add('active');
+            } else {
+                loadData();
+                loadSubscribers(); // Aboneleri de yükle
+            }
+
+            // EmailJS Ayarlarını Yükle
+            const emailConfig = JSON.parse(localStorage.getItem('emailConfig') || '{}');
+            document.getElementById('emailPublicKey').value = emailConfig.publicKey || '';
+            document.getElementById('emailServiceId').value = emailConfig.serviceId || '';
+            document.getElementById('emailTemplateId').value = emailConfig.templateId || '';
+
+            if (emailConfig.publicKey) {
+                emailjs.init(emailConfig.publicKey);
+            }
+        };
+
+        function saveToken() {
+            const token = document.getElementById('tokenInput').value.trim();
+            if (token) {
+                localStorage.setItem('ekopodcast_token', token);
+                GITHUB_TOKEN = token;
+                document.getElementById('tokenModal').classList.remove('active');
+                loadData();
+                loadSubscribers();
+            }
+        }
+
+        function resetToken() {
+            if (confirm('Çıkış yapmak istediğinize emin misiniz?')) {
+                localStorage.removeItem('ekopodcast_token');
+                location.reload();
+            }
+        }
+
+        function openEmailSettings() {
+            document.getElementById('emailSettingsModal').classList.add('active');
+        }
+
+        function saveEmailSettings() {
+            const config = {
+                publicKey: document.getElementById('emailPublicKey').value.trim(),
+                serviceId: document.getElementById('emailServiceId').value.trim(),
+                templateId: document.getElementById('emailTemplateId').value.trim()
+            };
+
+            localStorage.setItem('emailConfig', JSON.stringify(config));
+
+            if (config.publicKey) {
+                emailjs.init(config.publicKey);
+            }
+
+            alert('✅ Email ayarları kaydedildi!');
+            // Modal'ı kapatma, belki abone ekler
+        }
+
+        // ==========================================
+        // ABONE YÖNETİMİ
+        // ==========================================
+
+        async function loadSubscribers() {
+            const list = document.getElementById('subscribersList');
+            const countLabel = document.getElementById('subscriberCount');
+
+            try {
+                const response = await fetch(`https://api.github.com/repos/${USERNAME}/${REPO}/contents/subscribers.json?ref=main&t=${Date.now()}`, {
+                    headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    subscribersSha = data.sha;
+                    const content = decodeURIComponent(escape(atob(data.content)));
+                    const json = JSON.parse(content);
+                    subscribers = json.subscribers || [];
+
+                    renderSubscribers();
+                } else {
+                    // Dosya yoksa veya hata varsa
+                    console.log('Subscribers dosyası bulunamadı veya boş.');
+                    subscribers = [];
+                    renderSubscribers();
+                }
+
+            } catch (error) {
+                console.error('Abone listesi hatası:', error);
+                list.innerHTML = '<span style="color:red">Abone listesi yüklenemedi</span>';
+            }
+        }
+
+        function renderSubscribers() {
+            const list = document.getElementById('subscribersList');
+            const countLabel = document.getElementById('subscriberCount');
+
+            list.innerHTML = '';
+            countLabel.textContent = `${subscribers.length} abone`;
+
+            if (subscribers.length === 0) {
+                list.innerHTML = '<div style="text-align:center; color: var(--text-secondary); padding: 1rem;">Henüz abone yok.</div>';
+                return;
+            }
+
+            subscribers.forEach((email, index) => {
+                const div = document.createElement('div');
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
+                div.style.padding = '0.25rem 0';
+                div.style.borderBottom = '1px solid #333';
+                div.innerHTML = `
+                    <span style="font-size: 0.9rem;">${email}</span>
+                    <button onclick="removeSubscriber('${email}')" style="background:none; border:none; color: var(--danger); cursor:pointer;">&times;</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        async function addSubscriber() {
+            const input = document.getElementById('newSubscriberEmail');
+            const email = input.value.trim();
+
+            if (!email || !email.includes('@')) {
+                alert('Geçerli bir email girin');
+                return;
+            }
+
+            if (subscribers.includes(email)) {
+                alert('Bu email zaten kayıtlı.');
+                return;
+            }
+
+            subscribers.push(email);
+            await saveSubscribersToGithub();
+            input.value = '';
+            renderSubscribers();
+        }
+
+        async function removeSubscriber(email) {
+            if (confirm(`${email} silinsin mi?`)) {
+                subscribers = subscribers.filter(s => s !== email);
+                await saveSubscribersToGithub();
+                renderSubscribers();
+            }
+        }
+
+        async function saveSubscribersToGithub() {
+            try {
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify({
+                    subscribers: subscribers,
+                    lastUpdated: new Date().toISOString()
+                }, null, 2))));
+
+                // Eğer dosya yoksa create, varsa update (SHA gerekli)
+                const body = {
+                    message: `Abone listesi güncelleme: ${new Date().toLocaleString()}`,
+                    content: content
+                };
+
+                if (subscribersSha) {
+                    body.sha = subscribersSha;
+                }
+
+                const response = await fetch(`https://api.github.com/repos/${USERNAME}/${REPO}/contents/subscribers.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    subscribersSha = data.content.sha;
+                    console.log('Abone listesi kaydedildi.');
+                } else {
+                    alert('Abone listesi kaydedilemedi!');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Github bağlantı hatası (Abone listesi)');
+            }
+        }
+
+        // ==========================================
+        // EMAIL GÖNDERİMİ
+        // ==========================================
+
+        async function sendNotification(podcastIndex) {
+            const podcast = podcasts[podcastIndex];
+            if (!podcast) return;
+
+            const config = JSON.parse(localStorage.getItem('emailConfig') || '{}');
+            if (!config.serviceId || !config.templateId || !config.publicKey) {
+                alert('⚠️ Önce Email Ayarlarını yapmalısınız!');
+                openEmailSettings();
+                return;
+            }
+
+            if (subscribers.length === 0) {
+                alert('⚠️ Hiç abone yok. Önce abone ekleyin.');
+                openEmailSettings();
+                return;
+            }
+
+            if (!confirm(`"${podcast.title}" için ${subscribers.length} üyeye bildirim gönderilecek. Onaylıyor musunuz?`)) {
+                return;
+            }
+
+            const btn = document.getElementById(`notifyBtn_${podcast.id}`);
+            if (btn) {
+                btn.innerHTML = '⏳ Gönderiliyor...';
+                btn.disabled = true;
+            }
+
+            let successCount = 0;
+            let failCount = 0;
+
+            // EmailJS toplu gönderim desteklemez, döngü ile gönderiyoruz.
+            // Not: Free tier limitlerine dikkat.
+            for (const email of subscribers) {
+                try {
+                    await emailjs.send(config.serviceId, config.templateId, {
+                        to_email: email,
+                        title: podcast.title,
+                        description: podcast.description.substring(0, 150) + '...',
+                        link: `https://www.ekopodcast.com`, // Podcast'e özel link yapısı yoksa ana sayfa
+                        duration: podcast.duration,
+                        category: podcast.category
+                    });
+                    successCount++;
+                } catch (error) {
+                    console.error('Email hatası:', email, error);
+                    failCount++;
+                }
+            }
+
+            alert(`✅ Gönderim Tamamlandı!\nBaşarılı: ${successCount}\nHatalı: ${failCount}`);
+
+            if (btn) {
+                btn.innerHTML = '📧 Bildir';
+                btn.disabled = false;
+            }
+        }
+
+        // VERİLERİ ÇEK (data.json)
+        async function loadData() {
+            const list = document.getElementById('podcastList');
+            list.innerHTML = '<div style="text-align: center; padding: 2rem;">Veriler yükleniyor...</div>';
+
+            try {
+                // 1. data.json'ı çek
+                const dataResponse = await fetch(`https://api.github.com/repos/${USERNAME}/${REPO}/contents/data.json?ref=main&t=${Date.now()}`, {
+                    headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+                });
+
+                if (dataResponse.ok) {
+                    const data = await dataResponse.json();
+                    sha = data.sha;
+                    const content = decodeURIComponent(escape(atob(data.content)));
+                    const json = JSON.parse(content);
+                    podcasts = json.podcasts || [];
+                    renderList();
+                } else {
+                    throw new Error('Veri çekilemedi');
+                }
+
+            } catch (error) {
+                console.error(error);
+                list.innerHTML = '<div style="text-align: center; color: var(--danger);">Bağlantı hatası! Token veya internet kontrol edin.</div>';
+            }
+        }
+
+        // KAYIP DOSYALARI BUL VE EŞİTLE
+        async function syncFiles() {
+            const btn = document.querySelector('button[onclick="syncFiles()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Taranıyor...';
+            btn.disabled = true;
+
+            try {
+                // Uploads klasörünü tara
+                const uploadsResponse = await fetch(`https://api.github.com/repos/${USERNAME}/${REPO}/contents/uploads?ref=main&t=${Date.now()}`, {
+                    headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+                });
+
+                if (uploadsResponse.ok) {
+                    const files = await uploadsResponse.json();
+                    let newFilesFound = 0;
+
+                    files.forEach(file => {
+                        // Sadece ses dosyaları
+                        if (file.name.match(/\.(mp3|m4a|mp4|wav)$/i)) {
+                            // Bu dosya zaten listede var mı? (AudioUrl kontrolü)
+                            const exists = podcasts.some(p => p.audioUrl && decodeURIComponent(p.audioUrl).includes(file.name));
+
+                            if (!exists) {
+                                // Yoksa yeni ekle
+                                newFilesFound++;
+                                podcasts.unshift({
+                                    id: Date.now() + Math.floor(Math.random() * 1000),
+                                    title: file.name.replace(/\.[^/.]+$/, "").replace(/_/g, " "),
+                                    description: "Otomatik bulundu. Lütfen düzenleyin.",
+                                    category: "genel",
+                                    duration: 0,
+                                    date: new Date().toISOString().split('T')[0],
+                                    listens: 0,
+                                    featured: false,
+                                    audioUrl: file.download_url,
+                                    isNew: true
+                                });
+                            }
+                        }
+                    });
+
+                    if (newFilesFound > 0) {
+                        await saveDataToGithub();
+                        alert(`✅ ${newFilesFound} adet kayıp dosya bulundu ve listeye eklendi!`);
+                    } else {
+                        alert('👍 Tüm dosyalar zaten listede mevcut.');
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Hata: Dosyalar taranamadı.');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // LİSTEYİ GÖSTER
+        function renderList() {
+            const list = document.getElementById('podcastList');
+            list.innerHTML = '';
+
+            if (podcasts.length === 0) {
+                list.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">Henüz podcast yok. Yukarıdan dosya yükleyin!</div>';
+                return;
+            }
+
+            const sortedPodcasts = [...podcasts].sort((a, b) => b.id - a.id);
+
+            sortedPodcasts.forEach((podcast, index) => {
+                const item = document.createElement('div');
+                item.className = 'podcast-item';
+
+                // Yeni yüklenenleri vurgula
+                if (podcast.isNew) {
+                    item.style.border = '2px solid var(--accent)';
+                    item.style.background = 'rgba(234, 179, 8, 0.1)';
+                }
+
+                item.innerHTML = `
+                    <div class="podcast-info">
+                        <h3>${podcast.title} ${podcast.isNew ? '<span class="status-badge status-sync">YENİ</span>' : ''}</h3>
+                        <div class="podcast-meta">
+                            <span>📅 ${podcast.date}</span>
+                            <span>⏱️ ${podcast.duration} dk</span>
+                            <span>📁 ${podcast.category}</span>
+                        </div>
+                    </div>
+                    <div class="podcast-actions">
+                         <button id="notifyBtn_${podcast.id}" class="btn btn-secondary btn-sm" onclick="sendNotification(${podcasts.indexOf(podcast)})" title="Üyelere Bildirim Gönder">📧 Bildir</button>
+                        <button class="btn btn-secondary btn-sm" onclick="openEdit(${podcast.id})">✏️ Düzenle</button>
+                        <button class="btn btn-danger btn-sm" onclick="deletePodcast(${podcast.id})">🗑️ Sil</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // DOSYA YÜKLEME (GELİŞMİŞ)
+        async function handleFileSelect(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // İsim kontrolü
+            const fileName = file.name.replace(/\s+/g, '_');
+            const exists = podcasts.some(p => p.audioUrl && decodeURIComponent(p.audioUrl).includes(fileName));
+
+            if (exists) {
+                alert('⚠️ Bu isimde bir dosya zaten var! Lütfen dosya adını değiştirip tekrar deneyin.');
+                input.value = '';
+                return;
+            }
+
+            const status = document.getElementById('uploadStatus');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const btn = document.getElementById('uploadBtn');
+
+            // Reset UI
+            status.innerHTML = 'Dosya okunuyor...';
+            status.style.color = 'var(--text-primary)';
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            btn.disabled = true;
+
+            try {
+                const reader = new FileReader();
+
+                // İlerleme Göstergesi (Dosya Okuma)
+                reader.onprogress = function (e) {
+                    if (e.lengthComputable) {
+                        const percent = Math.round((e.loaded / e.total) * 50); // İlk %50 okuma
+                        progressBar.style.width = percent + '%';
+                        status.innerHTML = `⏳ Dosya hazırlanıyor... %${percent}`;
+                    }
+                };
+
+                reader.onload = async function () {
+                    const base64Content = reader.result.split(',')[1];
+
+                    status.innerHTML = '🚀 GitHub\'a gönderiliyor... (Bu işlem biraz sürebilir)';
+                    progressBar.style.width = '75%';
+
+                    // GitHub API Upload
+                    const uploadResp = await fetch(`https://api.github.com/repos/${USERNAME}/${REPO}/contents/uploads/${fileName}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${GITHUB_TOKEN}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: `Yeni podcast dosyası: ${fileName}`,
+                            content: base64Content
+                        })
+                    });
+
+                    if (!uploadResp.ok) {
+                        const err = await uploadResp.json();
+                        throw new Error(`GitHub Hatası: ${err.message}`);
+                    }
+
+                    progressBar.style.width = '90%';
+                    status.innerHTML = '💾 Veritabanı güncelleniyor...';
+
+                    const uploadData = await uploadResp.json();
+                    const downloadUrl = uploadData.content.download_url;
+
+                    // data.json'a ekle
+                    const newPodcast = {
+                        id: Date.now(),
+                        title: file.name.replace(/\.[^/.]+$/, ""),
+                        description: "Açıklama girilmedi. Düzenle butonuna basarak ekleyin.",
+                        category: "genel",
+                        duration: 0,
+                        date: new Date().toISOString().split('T')[0],
+                        listens: 0,
+                        featured: false,
+                        audioUrl: downloadUrl,
+                        isNew: true
+                    };
+
+                    podcasts.unshift(newPodcast);
+                    await saveDataToGithub();
+
+                    progressBar.style.width = '100%';
+                    status.innerHTML = '✅ Yükleme Başarılı!';
+                    status.style.color = 'var(--success)';
+                    input.value = '';
+
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        progressContainer.style.display = 'none';
+                        if (confirm('Podcast yüklendi! Şimdi abonelere bildirmek ister misiniz?')) {
+                            sendNotification(0);
+                        }
+                    }, 2000);
+                };
+
+                reader.onerror = function () {
+                    throw new Error('Dosya okuma hatası');
+                };
+
+                reader.readAsDataURL(file);
+
+            } catch (error) {
+                console.error(error);
+                status.innerHTML = '❌ Hata: ' + error.message;
+                status.style.color = 'var(--danger)';
+                btn.disabled = false;
+                progressContainer.style.display = 'none';
+            }
+        }
+
+        // DÜZENLEME
+        function openEdit(id) {
+            const podcast = podcasts.find(p => p.id === id);
+            if (!podcast) return;
+
+            document.getElementById('editId').value = podcast.id;
+            document.getElementById('editTitle').value = podcast.title;
+            document.getElementById('editDescription').value = podcast.description;
+            document.getElementById('editCategory').value = podcast.category;
+            document.getElementById('editDuration').value = podcast.duration;
+            document.getElementById('editAudioUrl').value = podcast.audioUrl;
+
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        async function savePodcast(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('editId').value);
+            const index = podcasts.findIndex(p => p.id === id);
+
+            if (index > -1) {
+                podcasts[index].title = document.getElementById('editTitle').value;
+                podcasts[index].description = document.getElementById('editDescription').value;
+                podcasts[index].category = document.getElementById('editCategory').value;
+                podcasts[index].duration = parseInt(document.getElementById('editDuration').value);
+
+                closeModal('editModal');
+                await saveDataToGithub();
+                alert('✅ Değişiklikler kaydedildi!');
+            }
+        }
+
+        // SİLME
+        async function deletePodcast(id) {
+            if (confirm('Bu podcast\'i ve ses dosyasını silmek istediğinize emin misiniz?')) {
+                const podcast = podcasts.find(p => p.id === id);
+
+                // 1. Dosyayı GitHub'dan sil (Eğer varsa)
+                if (podcast && podcast.audioUrl) {
+                    const fileName = podcast.audioUrl.split('/').pop();
+                    if (fileName) {
+                        await deleteFileFromGithub(fileName);
+                    }
+                }
+
+                // 2. Listeden sil ve kaydet
+                podcasts = podcasts.filter(p => p.id !== id);
+                await saveDataToGithub();
+            }
+        }
+
+        // GITHUB'DAN DOSYA SİL
+        async function deleteFileFromGithub(fileName) {
+            try {
+                // Önce dosyanın SHA bilgisini al
+                const getResp = await fetch(`https://api.github.com/repos/${USERNAME}/${REPO}/contents/uploads/${fileName}`, {
+                    headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+                });
+
+                if (getResp.ok) {
+                    const data = await getResp.json();
+
+                    // Dosyayı sil
+                    await fetch(`https://api.github.com/repos/${USERNAME}/${REPO}/contents/uploads/${fileName}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `token ${GITHUB_TOKEN}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: `Dosya silindi: ${fileName}`,
+                            sha: data.sha
+                        })
+                    });
+                }
+            } catch (error) {
+                console.error('Dosya silme hatası:', error);
+            }
+        }
+
+        // GITHUB'A KAYDET
+        async function saveDataToGithub(silent = false) {
+            try {
+                // isNew işaretini kaldırarak kaydet
+                const cleanPodcasts = podcasts.map(p => {
+                    const { isNew, ...rest } = p;
+                    return rest;
+                });
+
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify({ podcasts: cleanPodcasts }, null, 2))));
+
+                const response = await fetch(`https://api.github.com/repos/${USERNAME}/${REPO}/contents/data.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: `Admin panel güncellemesi: ${new Date().toLocaleString()}`,
+                        content: content,
+                        sha: sha
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    sha = data.content.sha;
+                    if (!silent) renderList();
+                } else {
+                    if (!silent) alert('Hata: GitHub güncellenemedi!');
+                }
+            } catch (error) {
+                console.error(error);
+                if (!silent) alert('Bağlantı hatası!');
+            }
+        }
+
+    </script>
+</body>
+
+</html>
