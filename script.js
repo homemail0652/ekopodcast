@@ -511,9 +511,10 @@ function handleRegister(event) {
         btn.disabled = true;
 
         emailjs.send(EMAIL_CONFIG.serviceId, EMAIL_CONFIG.templateId, {
+            to_email: "homemail0652@gmail.com", // ✅ Admin mail adresi
             from_name: "Yeni Üye",
             message: `Yeni bir üye kayıt oldu: ${email}`,
-            reply_to: email, // Admin bu maile yanıt verebilsin
+            reply_to: email,
             user_email: email
         }).then(
             function (response) {
