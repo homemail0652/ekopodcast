@@ -400,16 +400,34 @@ async function fetchPodcastsFromDataJson() {
         if (response.ok) {
             const data = await response.json();
             if (data.podcasts && Array.isArray(data.podcasts)) {
-                podcasts = data.podcasts;
-                console.log('✅ data.json başarıyla yüklendi:', podcasts.length, 'podcast');
+                let fetchedPodcasts = data.podcasts;
 
-                // ✅ İstatistikleri de yükle (varsa)
+                // ✅ AKILLI HAFIZA: Yerel verilerle birleştir
+                const localData = localStorage.getItem('ekopodcast_data');
+                if (localData) {
+                    try {
+                        const localPodcasts = JSON.parse(localData);
+                        fetchedPodcasts = fetchedPodcasts.map(fp => {
+                            const lp = localPodcasts.find(p => p.id === fp.id);
+                            // Eğer yereldeki dinlenme sayısı daha fazlaysa onu kullan
+                            if (lp && lp.listens > (fp.listens || 0)) {
+                                fp.listens = lp.listens;
+                            }
+                            return fp;
+                        });
+                        console.log('🧠 Akıllı hafıza devrede: Dinlenme sayıları güncellendi.');
+                    } catch (e) {
+                        console.error("Merge hatası:", e);
+                    }
+                }
+
+                podcasts = fetchedPodcasts;
+
+                // ✅ İstatistikleri de yükle
                 if (data.stats) {
-                    // Mevcut ziyaret sayısını koru, sadece diğer istatistikleri güncelle
                     const currentVisits = siteStats.totalVisits;
                     siteStats = { ...data.stats, totalVisits: currentVisits };
                     localStorage.setItem('siteStats', JSON.stringify(siteStats));
-                    console.log('✅ İstatistikler data.json\'dan yüklendi:', siteStats);
                 }
 
                 loadPodcasts();
