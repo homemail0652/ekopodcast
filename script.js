@@ -297,6 +297,9 @@ function openPodcast(podcastId) {
     try {
         localStorage.setItem('ekopodcast_data', JSON.stringify(podcasts));
         console.log('✅ Dinleme sayısı güncellendi (Local):', podcast.listens);
+
+        // Listeyi anlık güncelle (Böylece arkadaki kartta sayı artar)
+        loadPodcasts();
     } catch (error) {
         console.error('❌ localStorage kayıt hatası:', error);
     }
