@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Podcast Ekle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .file-input {
+            border: 2px dashed #667eea;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-input:hover {
+            background: #f0f0ff;
+        }
+
+        .file-input.has-file {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .success {
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .list {
+            margin-top: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .item {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .item p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .delete {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .info {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>🎙️ Podcast Ekle</h1>
+
+        <div class="info">
+            <strong>📋 2 ADIM:</strong><br>
+            1. Formu doldur → "Ekle" → "İndir"<br>
+            2. GitHub.com'da data.json'ı düzenle → İçeriği yapıştır
+        </div>
+
+        <form id="form">
+            <div class="input-group">
+                <label>Başlık *</label>
+                <input type="text" id="title" required placeholder="Podcast başlığı">
+            </div>
+
+            <div class="input-group">
+                <label>Açıklama *</label>
+                <textarea id="desc" rows="3" required placeholder="Kısa açıklama"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Kategori *</label>
+                <select id="cat" required>
+                    <option value="makroekonomi">Makroekonomi</option>
+                    <option value="piyasa">Piyasa Analizi</option>
+                    <option value="roportaj">Sektörel Değerlendirmeler</option>
+                    <option value="kripto">Kripto Para</option>
+                    <option value="finans">Emtia</option>
+                    <option value="yatirim">Yatırım Stratejileri</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Süre (dk) *</label>
+                <input type="number" id="dur" required placeholder="45" min="1">
+            </div>
+
+            <div class="input-group">
+                <label>Ses Dosyası *</label>
+                <div class="tabs">
+                    <button type="button" class="tab active" onclick="switchTab('file')">📁 Dosya Seç</button>
+                    <button type="button" class="tab" onclick="switchTab('url')">🔗 URL Gir</button>
+                </div>
+
+                <div id="file-tab" class="tab-content active">
+                    <input type="file" id="audioFile" accept="audio/*" style="display: none;"
+                        onchange="handleFileSelect(this)">
+                    <div class="file-input" id="fileLabel" onclick="document.getElementById('audioFile').click()">
+                        <div style="font-size: 48px; margin-bottom: 10px;">📁</div>
+                        <div style="font-weight: 600; margin-bottom: 5px;">Ses dosyası seçin</div>
+                        <div style="font-size: 14px; color: #666;">MP3, M4A, WAV desteklenir</div>
+                    </div>
+                </div>
+
+                <div id="url-tab" class="tab-content">
+                    <input type="url" id="audioUrl" placeholder="https://...">
+                    <small style="color: #666; display: block; margin-top: 5px;">
+                        Google Drive, Dropbox veya başka bir link
+                    </small>
+                </div>
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn">➕ Ekle</button>
+        </form>
+
+        <div id="success" class="success">✅ Eklendi! Şimdi "İndir" butonuna tıkla</div>
+
+        <div class="list" id="list"></div>
+
+        <button onclick="download()" class="btn" style="background: #4caf50; margin-top: 20px;">
+            💾 data.json İndir
+        </button>
+    </div>
+
+    <script>
+        let podcasts = [];
+        let currentAudioFile = null;
+        let currentTab = 'file';
+
+        // Sayfa yüklenince GitHub'dan çek
+        window.onload = async () => {
+            try {
+                const res = await fetch('https://raw.githubusercontent.com/homemail0652/EkoPodcast/main/data.json?t=' + Date.now());
+                if (res.ok) {
+                    const data = await res.json();
+                    podcasts = data.podcasts || [];
+                }
+            } catch (e) {
+                podcasts = [];
+            }
+            render();
+        };
+
+        // Tab değiştir
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+            if (tab === 'file') {
+                document.querySelector('.tab:first-child').classList.add('active');
+                document.getElementById('file-tab').classList.add('active');
+            } else {
+                document.querySelector('.tab:last-child').classList.add('active');
+                document.getElementById('url-tab').classList.add('active');
+            }
+        }
+
+        // Dosya seçildiğinde
+        function handleFileSelect(input) {
+            const file = input.files[0];
+            if (file) {
+                currentAudioFile = file;
+                const label = document.getElementById('fileLabel');
+                label.classList.add('has-file');
+                label.innerHTML = `
+                    <div style="font-size: 48px; margin-bottom: 10px;">✅</div>
+                    <div style="font-weight: 600; margin-bottom: 5px;">${file.name}</div>
+                    <div style="font-size: 14px; color: #666;">${(file.size / 1024 / 1024).toFixed(2)} MB</div>
+                `;
+            }
+        }
+
+        // Form submit
+        document.getElementById('form').onsubmit = async (e) => {
+            e.preventDefault();
+
+            let audioUrl = '';
+
+            if (currentTab === 'file') {
+                if (!currentAudioFile) {
+                    alert('Lütfen bir ses dosyası seçin!');
+                    return;
+                }
+                // Dosyayı base64'e çevir
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    audioUrl = event.target.result; // Base64 data URL
+                    addPodcast(audioUrl);
+                };
+                reader.readAsDataURL(currentAudioFile);
+                return;
+            } else {
+                audioUrl = document.getElementById('audioUrl').value;
+                if (!audioUrl) {
+                    alert('Lütfen bir URL girin!');
+                    return;
+                }
+                addPodcast(audioUrl);
+            }
+        };
+
+        function addPodcast(audioUrl) {
+            podcasts.unshift({
+                id: Date.now(),
+                title: document.getElementById('title').value,
+                description: document.getElementById('desc').value,
+                category: document.getElementById('cat').value,
+                duration: parseInt(document.getElementById('dur').value),
+                date: new Date().toISOString().split('T')[0],
+                listens: 0,
+                featured: false,
+                audioUrl: audioUrl
+            });
+
+            render();
+            document.getElementById('form').reset();
+            currentAudioFile = null;
+            document.getElementById('fileLabel').classList.remove('has-file');
+            document.getElementById('fileLabel').innerHTML = `
+                <div style="font-size: 48px; margin-bottom: 10px;">📁</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">Ses dosyası seçin</div>
+                <div style="font-size: 14px; color: #666;">MP3, M4A, WAV desteklenir</div>
+            `;
+
+            document.getElementById('success').style.display = 'block';
+            setTimeout(() => document.getElementById('success').style.display = 'none', 3000);
+        }
+
+        // Render
+        function render() {
+            const list = document.getElementById('list');
+            if (podcasts.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">Henüz podcast yok</p>';
+                return;
+            }
+            list.innerHTML = podcasts.map((p, i) => `
+                <div class="item">
+                    <div>
+                        <h3>${p.title}</h3>
+                        <p>${p.category} • ${p.duration} dk</p>
+                    </div>
+                    <button class="delete" onclick="del(${i})">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        // Sil
+        function del(i) {
+            if (confirm('Silmek istediğinize emin misiniz?')) {
+                podcasts.splice(i, 1);
+                render();
+            }
+        }
+
+        // İndir
+        function download() {
+            const blob = new Blob([JSON.stringify({ podcasts }, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('✅ İndirildi!\n\nŞimdi:\n1. GitHub.com/homemail0652/EkoPodcast adresine git\n2. data.json dosyasına tıkla\n3. Kalem (✏️) ikonuna tıkla\n4. İçeriği sil, indirdiğin dosyanın içeriğini yapıştır\n5. "Commit changes" butonuna tıkla\n\n2 dakika sonra www.ekopodcast.com güncellenecek!');
+        }
+    </script>
+</body>
+
+</html>

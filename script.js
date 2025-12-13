@@ -68,9 +68,9 @@ let siteStats = JSON.parse(localStorage.getItem('siteStats') || JSON.stringify({
 const categoryNames = {
     'makroekonomi': 'Makroekonomi',
     'piyasa': 'Piyasa Analizi',
-    'roportaj': 'Röportaj',
+    'roportaj': 'Sektörel Değerlendirmeler',
     'kripto': 'Kripto Para',
-    'finans': 'Kişisel Finans',
+    'finans': 'Emtia',
     'yatirim': 'Yatırım Stratejileri'
 };
 
