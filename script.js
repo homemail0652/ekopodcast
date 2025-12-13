@@ -472,11 +472,26 @@ function handleLogin(event) {
     alert('Başarıyla giriş yaptınız!');
 }
 
+// EmailJS Ayarları
+const EMAIL_CONFIG = {
+    publicKey: "HdHr7RK_6qsv34zWQ",
+    serviceId: "service_t2z72sq",
+    templateId: "temlate_ltotplo"
+};
+
+// Site açıldığında EmailJS başlat
+(function () {
+    if (EMAIL_CONFIG.publicKey && EMAIL_CONFIG.publicKey !== "BURAYA_PUBLIC_KEY_YAZIN") {
+        emailjs.init(EMAIL_CONFIG.publicKey);
+        console.log("EmailJS başlatıldı");
+    }
+})();
+
 function handleRegister(event) {
     event.preventDefault();
     const email = document.getElementById('registerEmail').value;
 
-    // ✅ Üyeyi kayıt listesine ekle
+    // 1. Yerel Kayıt (Mevcut Sistem)
     const newUser = {
         email: email,
         registeredAt: new Date().toISOString(),
@@ -488,9 +503,44 @@ function handleRegister(event) {
     currentUser = { email };
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-    closeModal('registerModal');
-    updateAuthUI();
-    alert('Başarıyla üye oldunuz! 🎉\n\nYeni podcast yüklendiğinde bildirim alacaksınız.');
+    // 2. Admin'e Mail Gönder (YENİ)
+    if (EMAIL_CONFIG.serviceId && EMAIL_CONFIG.serviceId !== "BURAYA_SERVICE_ID_YAZIN") {
+        const btn = event.target.querySelector('button');
+        const originalText = btn.innerText;
+        btn.innerText = "Kaydediliyor...";
+        btn.disabled = true;
+
+        emailjs.send(EMAIL_CONFIG.serviceId, EMAIL_CONFIG.templateId, {
+            from_name: "Yeni Üye",
+            message: `Yeni bir üye kayıt oldu: ${email}`,
+            reply_to: email, // Admin bu maile yanıt verebilsin
+            user_email: email
+        }).then(
+            function (response) {
+                console.log("Admin'e mail gönderildi", response);
+                alert('Başarıyla üye oldunuz! 🎉\n\nKaydınız alındı, en yeni bölümleri size haber vereceğiz.');
+                closeModal('registerModal');
+                updateAuthUI();
+                btn.innerText = originalText;
+                btn.disabled = false;
+            },
+            function (error) {
+                console.log("Mail gönderme hatası", error);
+                // Mail gitmese bile üye girişi yapsın
+                alert('Giriş yapıldı! (Bildirim servisinde geçici bir sorun var ama üyeliğiniz aktif)');
+                closeModal('registerModal');
+                updateAuthUI();
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        );
+    } else {
+        // EmailJS ayarlı değilse normal devam et
+        console.log("EmailJS ayarları eksik, sadece yerel kayıt yapıldı.");
+        closeModal('registerModal');
+        updateAuthUI();
+        alert('Başarıyla üye oldunuz! 🎉');
+    }
 }
 
 function handleLogout() {
