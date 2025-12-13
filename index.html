@@ -47,10 +47,15 @@
                     <a href="#" class="nav-link active">Ana Sayfa</a>
                     <a href="#" class="nav-link" onclick="showAllPodcasts(); return false;">Tüm Podcastler</a>
                     <a href="#" class="nav-link" onclick="showCategories(); return false;">Kategoriler</a>
-                    <a href="#" class="nav-link" onclick="showAdminPanel(); return false;">Yönetim Paneli</a>
-                    <!-- YENİ: Admin Butonları -->
-                    <a href="#" class="nav-link" onclick="showMembersList(); return false;" title="Üye Listesi">👥</a>
-                    <a href="#" class="nav-link" onclick="showSiteStats(); return false;" title="İstatistikler">📊</a>
+
+                    <!-- GİZLİ YÖNETİM LİNKLERİ -->
+                    <!-- Sadece '?mode=admin' ile giriş yapan bilgisayarlarda görünür -->
+                    <a href="admin-panel.html" class="nav-link admin-only"
+                        style="display: none; color: var(--color-accent-gold); font-weight: bold;">🔑 Yönetim</a>
+                    <a href="#" class="nav-link admin-only" onclick="showMembersList(); return false;"
+                        title="Üye Listesi" style="display: none;">👥</a>
+                    <a href="#" class="nav-link admin-only" onclick="showSiteStats(); return false;"
+                        title="İstatistikler" style="display: none;">📊</a>
                 </nav>
 
                 <div class="auth-buttons">
@@ -60,6 +65,27 @@
             </div>
         </div>
     </header>
+
+    <script>
+        // ADMIN TESPİT SİSTEMİ
+        (function () {
+            // 1. URL'de ?mode=admin var mı kontrol et
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('mode') === 'admin') {
+                localStorage.setItem('isAdmin', 'true');
+                alert('👑 Yönetici modu aktif edildi! Artık menüde yönetim panelini görebilirsiniz.');
+                // Parametreyi URL'den temizle
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+
+            // 2. LocalStorage kontrol et ve linkleri göster
+            if (localStorage.getItem('isAdmin') === 'true') {
+                document.querySelectorAll('.admin-only').forEach(function (el) {
+                    el.style.display = 'inline-block';
+                });
+            }
+        })();
+    </script>
 
     <!-- Hero Banner -->
     <section class="hero">
